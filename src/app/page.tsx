@@ -82,7 +82,7 @@ export default function Home() {
   const timelineData = [
     {
       year: '2018',
-      title: 'Sri Lanka Junior National Captain',
+      title: 'Sri Lanka Junior National Vice Captain',
       description: 'Led the Junior National squad in international clashes, capping off 7 consecutive years of national junior representation.',
       tag: 'Leadership',
       icon: '🏆'

@@ -313,7 +313,7 @@ export default function Packages() {
 
                 {selectedPackageDetail.benefits.length > 0 && (
                   <div>
-                    <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-slate-500 mb-4">What&apos;s Included</h3>
+                    <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-slate-500 mb-4">Benefits</h3>
                     <ul className="grid gap-3 grid-cols-1 sm:grid-cols-2">
                       {selectedPackageDetail.benefits.map((benefit, bIdx) => (
                         <li key={bIdx} className="flex items-start gap-3 text-sm text-slate-200 rounded-xl border border-white/5 bg-white/5 px-4 py-3">
