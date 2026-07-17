@@ -1,12 +1,45 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+
+interface Sponsor {
+  name: string;
+  imageUrl: string;
+  status: string;
+  description: string;
+}
 
 export default function Sponsors() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'current' | 'former'>('current');
+  const [sponsors, setSponsors] = useState<Sponsor[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch('/api/sponsors')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to load sponsors');
+        return res.json();
+      })
+      .then((data: { sponsors: Sponsor[] }) => {
+        if (!cancelled) setSponsors(data.sponsors);
+      })
+      .catch(() => {
+        if (!cancelled) setLoadError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Navigation Links - points back to homepage hashes
   const navLinks = [
@@ -19,51 +52,8 @@ export default function Sponsors() {
     { name: 'Contact', href: '/#contact' },
   ];
 
-  const currentSponsors = [
-    {
-      name: 'Scylla Zelus',
-      file: '/sponsors/scylla.png',
-      description: 'Performance and conditioning partner supporting the strength, mobility, and athletic development behind every training block.',
-    },
-    {
-      name: 'FitsAir',
-      file: '/sponsors/Fitsair.png',
-      description: 'Sri Lanka-based airline partner supporting tour travel logistics, getting Tuwin and his equipment to Challenger and Satellite events across Asia and beyond.',
-    },
-    {
-      name: 'Unikey Global',
-      file: '/sponsors/unikey-global.png',
-      description: 'Global business partner supporting operations and logistics behind Tuwin’s international tour schedule.',
-    },
-  ];
-
-  const formerSponsors = [
-    {
-      name: 'YETI',
-      file: '/sponsors/yeti.jfif',
-      description: 'Supplied premium drinkware, coolers, and travel-ready gear that kept training and recovery routines consistent across international tour stops.',
-    },
-    {
-      name: 'DYMEC',
-      file: '/sponsors/dymec.webp',
-      description: 'Engineering and equipment specialist that provided training technology and technical support behind match preparation.',
-    },
-    {
-      name: 'MERC-STOP',
-      file: '/sponsors/merc-stop.jpg',
-      description: 'Provided ground transport and logistics support around domestic training camps, tournaments, and appearances.',
-    },
-    {
-      name: 'Bolt Gear',
-      file: '/sponsors/bolt-gear.jfif',
-      description: 'Sportswear and apparel brand that outfitted match-day and training kits engineered for high-intensity squash movement.',
-    },
-    {
-      name: 'Ragneride',
-      file: '/sponsors/ragneride.jpg',
-      description: 'Fitness and conditioning partner that supported the strength, mobility, and injury-prevention work underpinning on-court performance.',
-    },
-  ];
+  const currentSponsors = sponsors.filter((s) => s.status === 'current');
+  const formerSponsors = sponsors.filter((s) => s.status === 'former');
 
   const activeSponsors = activeTab === 'current' ? currentSponsors : formerSponsors;
 
@@ -189,58 +179,66 @@ export default function Sponsors() {
           </div>
 
           {/* Scrolling Logo Marquee */}
-          {activeSponsors.length > 0 ? (
-            <div className="relative w-full overflow-hidden py-10 glass-card-layered">
-              <div className="absolute inset-0 opacity-[0.02] wave-contour-pattern pointer-events-none"></div>
-              <div
-                key={activeTab}
-                className="flex w-max gap-10 items-center animate-[marquee_22s_linear_infinite] hover:[animation-play-state:paused]"
-              >
-                {[...activeSponsors, ...activeSponsors].map((sponsor, idx) => (
+          {isLoading ? (
+            <div className="glass-card-layered p-10 text-center text-sm text-slate-400 uppercase tracking-widest font-bold">
+              Loading sponsors…
+            </div>
+          ) : loadError ? (
+            <div className="glass-card-layered p-10 text-center text-sm text-orange-accent uppercase tracking-widest font-bold">
+              Unable to load sponsors right now. Please try again later.
+            </div>
+          ) : activeSponsors.length > 0 ? (
+            <>
+              <div className="relative w-full overflow-hidden py-10 glass-card-layered">
+                <div className="absolute inset-0 opacity-[0.02] wave-contour-pattern pointer-events-none"></div>
+                <div
+                  key={activeTab}
+                  className="flex w-max gap-10 items-center animate-[marquee_22s_linear_infinite] hover:[animation-play-state:paused]"
+                >
+                  {[...activeSponsors, ...activeSponsors].map((sponsor, idx) => (
+                    <div
+                      key={`${sponsor.name}-${idx}`}
+                      className="flex-shrink-0 flex items-center justify-center h-24 w-48"
+                    >
+                      <Image
+                        src={sponsor.imageUrl}
+                        alt={sponsor.name}
+                        width={160}
+                        height={64}
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sponsor Descriptions */}
+              <div className="mt-8 grid gap-6 grid-cols-1 sm:grid-cols-2">
+                {activeSponsors.map((sponsor) => (
                   <div
-                    key={`${sponsor.name}-${idx}`}
-                    className="flex-shrink-0 flex items-center justify-center h-24 w-48 rounded-xl bg-white/95 p-4 shadow-md"
+                    key={sponsor.name}
+                    className="glass-card-layered p-6 flex items-start gap-4 relative overflow-hidden"
                   >
-                    <Image
-                      src={sponsor.file}
-                      alt={sponsor.name}
-                      width={160}
-                      height={64}
-                      className="h-full w-full object-contain"
-                    />
+                    <div className="flex-shrink-0 flex items-center justify-center h-14 w-14 rounded-xl bg-white/95 p-2 shadow-md">
+                      <Image
+                        src={sponsor.imageUrl}
+                        alt={sponsor.name}
+                        width={56}
+                        height={56}
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <h3 className="text-sm font-bold uppercase tracking-wide text-white">{sponsor.name}</h3>
+                      <p className="text-xs text-slate-400 leading-relaxed">{sponsor.description}</p>
+                    </div>
                   </div>
                 ))}
               </div>
-            </div>
+            </>
           ) : (
             <div className="glass-card-layered p-10 text-center text-sm text-slate-400">
-              No former sponsors to show yet.
-            </div>
-          )}
-
-          {/* Sponsor Descriptions */}
-          {activeSponsors.length > 0 && (
-            <div className="mt-8 grid gap-6 grid-cols-1 sm:grid-cols-2">
-              {activeSponsors.map((sponsor) => (
-                <div
-                  key={sponsor.name}
-                  className="glass-card-layered p-6 flex items-start gap-4 relative overflow-hidden"
-                >
-                  <div className="flex-shrink-0 flex items-center justify-center h-14 w-14 rounded-xl bg-white/95 p-2 shadow-md">
-                    <Image
-                      src={sponsor.file}
-                      alt={sponsor.name}
-                      width={56}
-                      height={56}
-                      className="h-full w-full object-contain"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <h3 className="text-sm font-bold uppercase tracking-wide text-white">{sponsor.name}</h3>
-                    <p className="text-xs text-slate-400 leading-relaxed">{sponsor.description}</p>
-                  </div>
-                </div>
-              ))}
+              No {activeTab} sponsors to show yet.
             </div>
           )}
         </section>

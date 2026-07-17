@@ -4,14 +4,15 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-interface GalleryData {
-  local: string[];
-  international: string[];
+interface GalleryCategory {
+  key: string;
+  label: string;
+  images: string[];
 }
 
 export default function Gallery() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [gallery, setGallery] = useState<GalleryData>({ local: [], international: [] });
+  const [categories, setCategories] = useState<GalleryCategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
 
@@ -23,8 +24,9 @@ export default function Gallery() {
         if (!res.ok) throw new Error('Failed to load gallery');
         return res.json();
       })
-      .then((data: GalleryData) => {
-        if (!cancelled) setGallery(data);
+      .then((data: { categories: GalleryCategory[] }) => {
+        // Newest column in the sheet is shown first
+        if (!cancelled) setCategories([...data.categories].reverse());
       })
       .catch(() => {
         if (!cancelled) setLoadError(true);
@@ -149,73 +151,51 @@ export default function Gallery() {
           <div className="py-20 text-center text-sm text-orange-accent uppercase tracking-widest font-bold">
             Unable to load gallery right now. Please try again later.
           </div>
+        ) : categories.length === 0 ? (
+          <div className="py-20 text-center text-sm text-slate-400 uppercase tracking-widest font-bold">
+            No gallery categories yet.
+          </div>
         ) : (
           <>
-            {/* International Section */}
-            <section className="relative z-10 space-y-6">
-              <div className="flex items-center gap-4">
-                <h2 className="text-2xl font-extrabold tracking-tight text-white uppercase">
-                  International
-                </h2>
-                <div className="h-px flex-1 bg-white/10"></div>
-                <span className="text-[10px] uppercase font-bold tracking-widest text-slate-500">
-                  {gallery.international.length} Photos
-                </span>
-              </div>
+            {categories.map((category, catIdx) => {
+              const isOrange = catIdx % 2 === 1;
+              return (
+                <section key={category.key} className="relative z-10 space-y-6">
+                  <div className="flex items-center gap-4">
+                    <h2 className="text-2xl font-extrabold tracking-tight text-white uppercase">
+                      {category.label}
+                    </h2>
+                    <div className="h-px flex-1 bg-white/10"></div>
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-slate-500">
+                      {category.images.length} Photos
+                    </span>
+                  </div>
 
-              {gallery.international.length > 0 ? (
-                <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                  {gallery.international.map((src, idx) => (
-                    <div key={`intl-${idx}`} className="relative aspect-square overflow-hidden rounded-2xl glass-card-layered-orange group">
-                      <Image
-                        src={src}
-                        alt={`International gallery photo ${idx + 1}`}
-                        fill
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
+                  {category.images.length > 0 ? (
+                    <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                      {category.images.map((src, idx) => (
+                        <div
+                          key={`${category.key}-${idx}`}
+                          className={`relative aspect-square overflow-hidden rounded-2xl group ${isOrange ? 'glass-card-layered-orange' : 'glass-card-layered'}`}
+                        >
+                          <Image
+                            src={src}
+                            alt={`${category.label} gallery photo ${idx + 1}`}
+                            fill
+                            sizes="(max-width: 768px) 50vw, 25vw"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="glass-card-layered-orange p-8 text-center text-sm text-slate-400">
-                  No international photos yet.
-                </div>
-              )}
-            </section>
-
-            {/* Local Section */}
-            <section className="relative z-10 space-y-6">
-              <div className="flex items-center gap-4">
-                <h2 className="text-2xl font-extrabold tracking-tight text-white uppercase">
-                  Local
-                </h2>
-                <div className="h-px flex-1 bg-white/10"></div>
-                <span className="text-[10px] uppercase font-bold tracking-widest text-slate-500">
-                  {gallery.local.length} Photos
-                </span>
-              </div>
-
-              {gallery.local.length > 0 ? (
-                <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                  {gallery.local.map((src, idx) => (
-                    <div key={`local-${idx}`} className="relative aspect-square overflow-hidden rounded-2xl glass-card-layered group">
-                      <Image
-                        src={src}
-                        alt={`Local gallery photo ${idx + 1}`}
-                        fill
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
+                  ) : (
+                    <div className={`p-8 text-center text-sm text-slate-400 ${isOrange ? 'glass-card-layered-orange' : 'glass-card-layered'}`}>
+                      No {category.label.toLowerCase()} photos yet.
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="glass-card-layered p-8 text-center text-sm text-slate-400">
-                  No local photos yet.
-                </div>
-              )}
-            </section>
+                  )}
+                </section>
+              );
+            })}
           </>
         )}
 
