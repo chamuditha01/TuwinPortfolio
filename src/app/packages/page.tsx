@@ -335,7 +335,7 @@ export default function Packages() {
 
                 <button
                   type="button"
-                  onClick={() => document.getElementById('packages-contact')?.scrollIntoView({ behavior: 'smooth' })}
+                  onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
                   className="inline-flex items-center justify-center rounded-full bg-cyan-accent px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] text-black hover:bg-cyan-300 hover:scale-[1.03] transition-all duration-300 shadow-lg shadow-cyan-accent/35 cursor-pointer"
                 >
                   Continue To Inquiry
@@ -425,7 +425,7 @@ export default function Packages() {
             </div>
 
             {/* Quick Contact Form */}
-            <div className="flex-1 glass-card-layered p-8 shadow-xl flex flex-col justify-between relative overflow-hidden">
+            <div id="inquiry-form" className="flex-1 glass-card-layered p-8 shadow-xl flex flex-col justify-between relative overflow-hidden">
               <div className="absolute inset-0 opacity-[0.02] wave-contour-pattern pointer-events-none"></div>
 
               <form className="space-y-4 z-10 relative" onSubmit={handleInquirySubmit}>
