@@ -10,6 +10,7 @@ export default function Home() {
   const [inquiryForm, setInquiryForm] = useState({ name: '', email: '', message: '' });
   const [inquiryStatus, setInquiryStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [bio, setBio] = useState({ name: 'Tuwin Nilakshana', worldRank: '316', age: '26' });
+  const [sponsors, setSponsors] = useState<{ name: string; imageUrl: string; status: string; description: string }[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -29,6 +30,26 @@ export default function Home() {
       })
       .catch(() => {
         // Keep default bio values on failure
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch('/api/sponsors')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to load sponsors');
+        return res.json();
+      })
+      .then((data: { sponsors: { name: string; imageUrl: string; status: string; description: string }[] }) => {
+        if (!cancelled) setSponsors(data.sponsors);
+      })
+      .catch(() => {
+        // Keep empty sponsors list on failure
       });
 
     return () => {
@@ -207,6 +228,28 @@ export default function Home() {
           </div>
         </div>
       </header>
+
+      {/* Top Sponsor Ribbon Ticker */}
+      {sponsors.length > 0 && (
+        <div className="relative z-10 w-full overflow-hidden border-b border-white/5 bg-[#06070a]/60 py-3">
+          <div className="flex w-max gap-12 items-center animate-[marquee_25s_linear_infinite] hover:[animation-play-state:paused] opacity-60">
+            {[...sponsors, ...sponsors].map((sponsor, idx) => (
+              <div
+                key={`top-${sponsor.name}-${idx}`}
+                className="flex-shrink-0 flex items-center justify-center h-8 w-24"
+              >
+                <Image
+                  src={sponsor.imageUrl}
+                  alt={sponsor.name}
+                  width={96}
+                  height={32}
+                  className="h-full w-full object-contain"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="relative z-10 mx-auto w-full max-w-6xl px-6">
@@ -698,56 +741,27 @@ export default function Home() {
             <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-slate-500 mb-12">
               Powered By The Best
             </h2>
-            <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16 opacity-75">
 
-              {/* Yeti Sponsor Logo */}
-              <div className="flex items-center text-white/50 hover:text-orange-accent transition-colors duration-300">
-                <svg className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M4 14c0-4 3-7 8-7s8 3 8 7" strokeLinecap="round" />
-                  <path d="M6 14h12c0 2-2 4-6 4s-6-2-6-4z" />
-                  <circle cx="9" cy="11" r="1.5" fill="currentColor" />
-                  <circle cx="15" cy="11" r="1.5" fill="currentColor" />
-                  <path d="M11 15h2" strokeLinecap="round" />
-                </svg>
+            {sponsors.length > 0 && (
+              <div className="relative w-full overflow-hidden py-4">
+                <div className="flex w-max gap-16 items-center animate-[marquee_25s_linear_infinite] hover:[animation-play-state:paused] opacity-75">
+                  {[...sponsors, ...sponsors].map((sponsor, idx) => (
+                    <div
+                      key={`${sponsor.name}-${idx}`}
+                      className="flex-shrink-0 flex items-center justify-center h-16 w-36"
+                    >
+                      <Image
+                        src={sponsor.imageUrl}
+                        alt={sponsor.name}
+                        width={144}
+                        height={64}
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
-
-              {/* FitsAir Sponsor Logo */}
-              <div className="flex items-center text-white/50 hover:text-cyan-accent transition-colors duration-300">
-                <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
-                </svg>
-              </div>
-
-              {/* Dymec Sponsor Logo */}
-              <div className="flex items-center text-white/50 hover:text-cyan-accent transition-colors duration-300">
-                <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                  <path d="M2 10h3l2.5-6L11 18l3-12L17.5 14H22" />
-                </svg>
-              </div>
-
-              {/* Merc-Stop Sponsor Logo */}
-              <div className="flex items-center text-white/50 hover:text-orange-accent transition-colors duration-300">
-                <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                </svg>
-              </div>
-
-              {/* Bolt Gear Sponsor Logo */}
-              <div className="flex items-center text-white/50 hover:text-cyan-accent transition-colors duration-300">
-                <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-                </svg>
-              </div>
-
-              {/* Ragneride Sponsor Logo */}
-              <div className="flex items-center text-white/50 hover:text-cyan-accent transition-colors duration-300">
-                <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M6 4h8a4 4 0 0 1 0 8H6v8" />
-                  <path d="M12 12l6 8" />
-                </svg>
-              </div>
-
-            </div>
+            )}
           </div>
         </section>
 
