@@ -20,17 +20,49 @@ export default function Sponsors() {
   ];
 
   const currentSponsors = [
-    { name: 'Scylla Zelus', file: '/sponsors/scylla.png' },
-    { name: 'FitsAir', file: '/sponsors/Fitsair.png' },
-    { name: 'Unikey Global', file: '/sponsors/unikey-global.png' },
+    {
+      name: 'Scylla Zelus',
+      file: '/sponsors/scylla.png',
+      description: 'Performance and conditioning partner supporting the strength, mobility, and athletic development behind every training block.',
+    },
+    {
+      name: 'FitsAir',
+      file: '/sponsors/Fitsair.png',
+      description: 'Sri Lanka-based airline partner supporting tour travel logistics, getting Tuwin and his equipment to Challenger and Satellite events across Asia and beyond.',
+    },
+    {
+      name: 'Unikey Global',
+      file: '/sponsors/unikey-global.png',
+      description: 'Global business partner supporting operations and logistics behind Tuwin’s international tour schedule.',
+    },
   ];
 
   const formerSponsors = [
-    { name: 'YETI', file: '/sponsors/yeti.jfif' },
-    { name: 'DYMEC', file: '/sponsors/dymec.webp' },
-    { name: 'MERC-STOP', file: '/sponsors/merc-stop.jpg' },
-    { name: 'Bolt Gear', file: '/sponsors/bolt-gear.jfif' },
-    { name: 'Ragneride', file: '/sponsors/ragneride.jpg' },
+    {
+      name: 'YETI',
+      file: '/sponsors/yeti.jfif',
+      description: 'Supplied premium drinkware, coolers, and travel-ready gear that kept training and recovery routines consistent across international tour stops.',
+    },
+    {
+      name: 'DYMEC',
+      file: '/sponsors/dymec.webp',
+      description: 'Engineering and equipment specialist that provided training technology and technical support behind match preparation.',
+    },
+    {
+      name: 'MERC-STOP',
+      file: '/sponsors/merc-stop.jpg',
+      description: 'Provided ground transport and logistics support around domestic training camps, tournaments, and appearances.',
+    },
+    {
+      name: 'Bolt Gear',
+      file: '/sponsors/bolt-gear.jfif',
+      description: 'Sportswear and apparel brand that outfitted match-day and training kits engineered for high-intensity squash movement.',
+    },
+    {
+      name: 'Ragneride',
+      file: '/sponsors/ragneride.jpg',
+      description: 'Fitness and conditioning partner that supported the strength, mobility, and injury-prevention work underpinning on-court performance.',
+    },
   ];
 
   const activeSponsors = activeTab === 'current' ? currentSponsors : formerSponsors;
@@ -183,6 +215,32 @@ export default function Sponsors() {
           ) : (
             <div className="glass-card-layered p-10 text-center text-sm text-slate-400">
               No former sponsors to show yet.
+            </div>
+          )}
+
+          {/* Sponsor Descriptions */}
+          {activeSponsors.length > 0 && (
+            <div className="mt-8 grid gap-6 grid-cols-1 sm:grid-cols-2">
+              {activeSponsors.map((sponsor) => (
+                <div
+                  key={sponsor.name}
+                  className="glass-card-layered p-6 flex items-start gap-4 relative overflow-hidden"
+                >
+                  <div className="flex-shrink-0 flex items-center justify-center h-14 w-14 rounded-xl bg-white/95 p-2 shadow-md">
+                    <Image
+                      src={sponsor.file}
+                      alt={sponsor.name}
+                      width={56}
+                      height={56}
+                      className="h-full w-full object-contain"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <h3 className="text-sm font-bold uppercase tracking-wide text-white">{sponsor.name}</h3>
+                    <p className="text-xs text-slate-400 leading-relaxed">{sponsor.description}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </section>
