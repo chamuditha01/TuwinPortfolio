@@ -59,6 +59,7 @@ export default function Home() {
 
   const [bioFirstName, ...bioLastNameParts] = bio.name.trim().split(' ');
   const bioLastName = bioLastNameParts.join(' ');
+  const currentSponsors = sponsors.filter((s) => s.status === 'current');
 
   const handleInquirySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -230,10 +231,12 @@ export default function Home() {
       </header>
 
       {/* Top Sponsor Ribbon Ticker */}
-      {sponsors.length > 0 && (
-        <div className="relative z-10 w-full overflow-hidden border-b border-white/5 bg-[#06070a]/60 py-3">
+      {currentSponsors.length > 0 && (
+        <div className="relative z-10 w-full overflow-hidden border-b border-white/5 py-3">
           <div className="flex w-max gap-12 items-center animate-[marquee_25s_linear_infinite] hover:[animation-play-state:paused] opacity-60">
-            {[...sponsors, ...sponsors].map((sponsor, idx) => (
+            {Array.from({ length: Math.max(2, Math.ceil(16 / currentSponsors.length)) })
+              .flatMap(() => currentSponsors)
+              .map((sponsor, idx) => (
               <div
                 key={`top-${sponsor.name}-${idx}`}
                 className="flex-shrink-0 flex items-center justify-center h-8 w-24"
@@ -288,12 +291,12 @@ export default function Home() {
               >
                 View Achievements
               </a>
-              <a
-                href="#partners"
+              <Link
+                href="/packages"
                 className="inline-flex items-center justify-center rounded-full bg-cyan-accent px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] text-black hover:bg-cyan-300 hover:scale-[1.03] transition-all duration-300 shadow-lg shadow-cyan-accent/35 cursor-pointer"
               >
                 Become A Sponsor
-              </a>
+              </Link>
             
             </div>
           </div>

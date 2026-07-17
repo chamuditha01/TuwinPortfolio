@@ -219,13 +219,13 @@ export default function Sponsors() {
                     key={sponsor.name}
                     className="glass-card-layered p-6 flex items-start gap-4 relative overflow-hidden"
                   >
-                    <div className="flex-shrink-0 flex items-center justify-center h-14 w-14 rounded-xl bg-white/95 p-2 shadow-md">
+                    <div className="flex-shrink-0 relative h-14 w-14 rounded-xl overflow-hidden shadow-md">
                       <Image
                         src={sponsor.imageUrl}
                         alt={sponsor.name}
-                        width={56}
-                        height={56}
-                        className="h-full w-full object-contain"
+                        fill
+                        sizes="56px"
+                        className="object-contain"
                       />
                     </div>
                     <div className="space-y-1.5">
@@ -254,7 +254,7 @@ export default function Sponsors() {
               Open for new sponsorships and brand collaborations as Tuwin pushes for the PSA World Tour top rankings this season.
             </p>
             <Link
-              href="/#contact"
+              href="/packages"
               className="inline-flex items-center justify-center rounded-full bg-cyan-accent px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] text-black hover:bg-cyan-300 hover:scale-[1.03] transition-all duration-300 shadow-lg shadow-cyan-accent/35 cursor-pointer"
             >
               Become A Sponsor
