@@ -1,8 +1,20 @@
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+export const dynamic = 'force-dynamic';
+
 const INQUIRY_RECIPIENT = process.env.CONTACT_INQUIRY_TO ?? 'heshanchamuditha05@gmail.com';
+
+let resend: Resend | null = null;
+function getResend() {
+  if (!resend) {
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error('RESEND_API_KEY is not set');
+    }
+    resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return resend;
+}
 
 export async function POST(request: Request) {
   const { name, email, message } = await request.json();
@@ -11,7 +23,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Name, email, and message are required.' }, { status: 400 });
   }
 
-  const { error } = await resend.emails.send({
+  let client: Resend;
+  try {
+    client = getResend();
+  } catch (err) {
+    console.error('Resend init error:', err);
+    return NextResponse.json({ error: 'Email service is not configured.' }, { status: 500 });
+  }
+
+  const { error } = await client.emails.send({
     from: 'Tuwin Nilakshana Portfolio <onboarding@resend.dev>',
     to: INQUIRY_RECIPIENT,
     replyTo: email,
