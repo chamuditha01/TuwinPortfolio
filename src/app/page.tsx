@@ -568,7 +568,7 @@ export default function Home() {
                 <span className="inline-block rounded-full bg-orange-accent/10 text-orange-accent px-3 py-1 text-[9px] font-extrabold uppercase tracking-widest">National Duty</span>
                 <h4 className="text-xl font-bold uppercase tracking-wide text-white">National Veteran</h4>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  Represented Sri Lanka at the Asian Senior Squash Championship in Hong Kong 2023 and ranked among the 50 in Asia 2023. Represented the Sri Lanka Junior National Team since 2013. Selected and served as Vice Captain leading international team clashes.
+                  Represented Sri Lanka at the Asian Senior Squash Championship in Hong Kong 2023 and ranked among the top 50 in Asia 2023. Represented the Sri Lanka Junior National Team since 2013. Selected and served as Vice Captain leading international team clashes.
                 </p>
               </div>
               <div className="mt-6 border-t border-white/5 pt-4 text-[9px] uppercase font-bold text-slate-500 tracking-wider">
