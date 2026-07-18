@@ -9,7 +9,7 @@ export default function Home() {
   const [selectedYearIndex, setSelectedYearIndex] = useState(0);
   const [inquiryForm, setInquiryForm] = useState({ name: '', email: '', message: '' });
   const [inquiryStatus, setInquiryStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
-  const [bio, setBio] = useState({ name: 'Tuwin Nilakshana', worldRank: '316', age: '26' });
+  const [bio, setBio] = useState({ name: 'Tuwin Herath', worldRank: '316', age: '26' });
   const [sponsors, setSponsors] = useState<{ name: string; imageUrl: string; status: string; description: string }[]>([]);
 
   useEffect(() => {
@@ -335,7 +335,7 @@ export default function Home() {
               <div className="relative h-80 w-80 sm:h-[400px] sm:w-[400px] overflow-hidden rounded-full border border-white/10 bg-gradient-to-b from-[#0e121d] to-[#06070a] p-3 shadow-2xl">
   <Image
     src="/tuwin-cover-square.jpg"
-    alt="Tuwin Nilakshana Squash Athlete Profile Photo"
+    alt="Tuwin Herath Squash Athlete Profile Photo"
     fill
     className="rounded-full object-cover object-[center_30%] transition-transform duration-500 group-hover:scale-105"    sizes="(max-width: 640px) 296px, 380px"
     priority

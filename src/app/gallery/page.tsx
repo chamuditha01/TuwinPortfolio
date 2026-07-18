@@ -66,7 +66,7 @@ export default function Gallery() {
       <header className="animate-slide-down sticky top-0 z-50 border-b border-white/5 bg-[#06070a]/80 backdrop-blur-md transition-all duration-300">
         <div className="mx-auto w-full max-w-6xl px-6 flex items-center justify-between py-4">
           <Link href="/" className="text-xl font-bold uppercase tracking-widest text-white hover:text-cyan-accent transition-colors">
-            Tuwin <span className="text-cyan-accent text-gradient-cyan-solid font-extrabold">Nilakshana</span>
+            Tuwin <span className="text-cyan-accent text-gradient-cyan-solid font-extrabold">Herath</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -206,7 +206,7 @@ export default function Gallery() {
         <div className="mx-auto w-full max-w-6xl px-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
             <p className="text-base font-bold uppercase tracking-widest text-white font-sans">
-              Tuwin <span className="text-cyan-accent">Nilakshana</span>
+              Tuwin <span className="text-cyan-accent">Herath</span>
             </p>
             <p className="text-xs text-slate-400 mt-1 uppercase tracking-wider font-sans">
               Professional Squash Athlete Portfolio
@@ -229,7 +229,7 @@ export default function Gallery() {
           </div>
 
           <div className="flex flex-col gap-1 text-xs text-slate-400 md:text-right font-sans">
-            <p>© {new Date().getFullYear()} Tuwin Nilakshana. Designed &amp; Developed by Zerone.</p>
+            <p>© {new Date().getFullYear()} Tuwin Herath. Designed &amp; Developed by Zerone.</p>
             <p className="text-[10px] text-slate-500">All rights reserved. Unauthorized reproduction is prohibited.</p>
           </div>
         </div>

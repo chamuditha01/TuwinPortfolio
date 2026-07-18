@@ -16,11 +16,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Tuwin Nilakshana | Professional Squash Athlete & WSF Level 1 Coach",
-  description: "Official portfolio of Tuwin Nilakshana, world-ranked squash player (PSA No. 316) representing Sri Lanka. High performance athlete, WSF coach, and Deshabandu award recipient.",
+  title: "Tuwin Herath | Professional Squash Athlete & WSF Level 1 Coach",
+  description: "Official portfolio of Tuwin Herath, world-ranked squash player (PSA No. 316) representing Sri Lanka. High performance athlete, WSF coach, and Deshabandu award recipient.",
   keywords: [
-    "Tuwin Nilakshana",
-    "Tuwin Nilakshana Herath",
+    "Tuwin Herath",
+    "Tuwin Herath",
     "Squash",
     "Professional Squash Athlete",
     "PSA World Tour",
@@ -30,20 +30,20 @@ export const metadata: Metadata = {
     "Deshabandu Award",
     "Sports Management"
   ],
-  authors: [{ name: "Tuwin Nilakshana" }],
-  creator: "Tuwin Nilakshana",
+  authors: [{ name: "Tuwin Herath" }],
+  creator: "Tuwin Herath",
   openGraph: {
-    title: "Tuwin Nilakshana | Professional Squash Athlete & WSF Level 1 Coach",
-    description: "Official portfolio of Tuwin Nilakshana, world-ranked squash player representing Sri Lanka. High performance athlete and certified WSF Coach.",
+    title: "Tuwin Herath | Professional Squash Athlete & WSF Level 1 Coach",
+    description: "Official portfolio of Tuwin Herath, world-ranked squash player representing Sri Lanka. High performance athlete and certified WSF Coach.",
     url: "https://tuwinherath.com",
-    siteName: "Tuwin Nilakshana Portfolio",
+    siteName: "Tuwin Herath Portfolio",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Tuwin Nilakshana | Professional Squash Athlete & WSF Level 1 Coach",
-    description: "Official portfolio of Tuwin Nilakshana, world-ranked squash player representing Sri Lanka.",
+    title: "Tuwin Herath | Professional Squash Athlete & WSF Level 1 Coach",
+    description: "Official portfolio of Tuwin Herath, world-ranked squash player representing Sri Lanka.",
   },
   robots: {
     index: true,
