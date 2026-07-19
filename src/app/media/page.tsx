@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface MediaItem {
   id: string;
@@ -35,6 +36,7 @@ export default function MediaPress() {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
+  const [sponsors, setSponsors] = useState<{ name: string; imageUrl: string; status: string; description: string }[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -52,6 +54,26 @@ export default function MediaPress() {
       })
       .finally(() => {
         if (!cancelled) setIsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch('/api/sponsors')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to load sponsors');
+        return res.json();
+      })
+      .then((data: { sponsors: { name: string; imageUrl: string; status: string; description: string }[] }) => {
+        if (!cancelled) setSponsors(data.sponsors);
+      })
+      .catch(() => {
+        // Keep empty sponsors list on failure
       });
 
     return () => {
@@ -384,176 +406,33 @@ export default function MediaPress() {
         </section>
 
         {/* Section 4: Scrolling Sponsor Ribbon Ticker */}
-        <section className="py-12 border-t border-white/5">
-          <p className="text-center text-[10px] uppercase font-bold tracking-[0.3em] text-slate-500 mb-8">
-            Official Partners &amp; Sponsors
-          </p>
+        {sponsors.length > 0 && (
+          <section className="py-12 border-t border-white/5">
+            <p className="text-center text-[10px] uppercase font-bold tracking-[0.3em] text-slate-500 mb-8">
+              Official Partners &amp; Sponsors
+            </p>
 
-          {/* Scrolling ticker track */}
-          <div className="relative w-full overflow-hidden py-4 bg-slate-900/10 border-y border-white/5">
-            <div className="flex w-[200%] gap-12 items-center justify-around animate-[marquee_25s_linear_infinite] hover:[animation-play-state:paused] opacity-40">
-
-              {/* Set of logos */}
-              <div className="flex items-center justify-around w-1/2 gap-12">
-                {/* Unikey Global */}
-                <div className="flex items-center gap-2 text-white/50 hover:text-cyan-accent transition-colors duration-300 whitespace-nowrap">
-                  <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="7.5" cy="15.5" r="5.5" />
-                    <path d="M21 2l-9.6 9.6" />
-                    <path d="M15.5 7.5l3 3" />
-                    <path d="M18.5 4.5l3 3" />
-                  </svg>
-                  <span className="text-[12px] font-black tracking-widest uppercase">UNIKEY GLOBAL</span>
-                </div>
-
-                {/* Winged Falcon */}
-                <div className="flex items-center gap-2 text-white/50 hover:text-orange-accent transition-colors duration-300 whitespace-nowrap">
-                  <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 2L2 9l10 3 10-3-10-7z" />
-                    <path d="M2 9v6c0 5.5 4.5 10 10 10s10-4.5 10-10V9" />
-                    <path d="M12 12v11" />
-                  </svg>
-                  <span className="text-[12px] font-black tracking-widest uppercase">WINGED FALCON</span>
-                </div>
-
-                {/* Yeti */}
-                <div className="flex items-center gap-2.5 text-white/50 hover:text-orange-accent transition-colors duration-300 whitespace-nowrap">
-                  <svg className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M4 14c0-4 3-7 8-7s8 3 8 7" strokeLinecap="round" />
-                    <path d="M6 14h12c0 2-2 4-6 4s-6-2-6-4z" />
-                    <circle cx="9" cy="11" r="1.5" fill="currentColor" />
-                    <circle cx="15" cy="11" r="1.5" fill="currentColor" />
-                    <path d="M11 15h2" strokeLinecap="round" />
-                  </svg>
-                  <span className="text-[12px] font-black tracking-widest uppercase">YETI</span>
-                </div>
-
-                {/* Ragneride */}
-                <div className="flex items-center gap-2.5 text-white/50 hover:text-cyan-accent transition-colors duration-300 whitespace-nowrap">
-                  <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M6 4h8a4 4 0 0 1 0 8H6v8" />
-                    <path d="M12 12l6 8" />
-                  </svg>
-                  <span className="text-[12px] font-black tracking-widest uppercase">Ragneride</span>
-                </div>
-
-                {/* PSA World Tour */}
-                <div className="flex items-center gap-2 text-white/50 hover:text-cyan-accent transition-colors duration-300 whitespace-nowrap">
-                  <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                    <path d="M2 12h20" />
-                  </svg>
-                  <span className="text-[12px] font-black tracking-widest uppercase">PSA WORLD TOUR</span>
-                </div>
-
-                {/* Sri Lanka Squash */}
-                <div className="flex items-center gap-2 text-white/50 hover:text-cyan-accent transition-colors duration-300 whitespace-nowrap">
-                  <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-                  </svg>
-                  <span className="text-[12px] font-black tracking-widest uppercase">SRI LANKA SQUASH</span>
-                </div>
-
-                {/* FitsAir */}
-                <div className="flex items-center gap-2 text-white/50 hover:text-cyan-accent transition-colors duration-300 whitespace-nowrap">
-                  <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
-                  </svg>
-                  <span className="text-[12px] font-black tracking-widest uppercase">FITSAIR</span>
-                </div>
-
-                {/* Dymec */}
-                <div className="flex items-center gap-2 text-white/50 hover:text-cyan-accent transition-colors duration-300 whitespace-nowrap">
-                  <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                    <path d="M2 10h3l2.5-6L11 18l3-12L17.5 14H22" />
-                  </svg>
-                  <span className="text-[12px] font-black tracking-widest uppercase">DYMEC</span>
-                </div>
+            {/* Scrolling ticker track */}
+            <div className="relative w-full overflow-hidden py-4 bg-slate-900/10 border-y border-white/5">
+              <div className="flex w-max gap-16 items-center animate-[marquee_25s_linear_infinite] hover:[animation-play-state:paused] opacity-75">
+                {[...sponsors, ...sponsors].map((sponsor, idx) => (
+                  <div
+                    key={`${sponsor.name}-${idx}`}
+                    className="flex-shrink-0 flex items-center justify-center h-16 w-36"
+                  >
+                    <Image
+                      src={sponsor.imageUrl}
+                      alt={sponsor.name}
+                      width={144}
+                      height={64}
+                      className="h-full w-full object-contain"
+                    />
+                  </div>
+                ))}
               </div>
-
-              {/* Repeated set of logos for seamless loop */}
-              <div className="flex items-center justify-around w-1/2 gap-12">
-                {/* Unikey Global (with offset) */}
-                <div style={{ marginLeft: '60px' }} className="flex items-center gap-2 text-white/50 hover:text-cyan-accent transition-colors duration-300 whitespace-nowrap">
-                  <svg style={{ marginLeft: '180px' }} className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="7.5" cy="15.5" r="5.5" />
-                    <path d="M21 2l-9.6 9.6" />
-                    <path d="M15.5 7.5l3 3" />
-                    <path d="M18.5 4.5l3 3" />
-                  </svg>
-                  <span className="text-[12px] font-black tracking-widest uppercase">UNIKEY GLOBAL</span>
-                </div>
-
-                {/* Winged Falcon */}
-                <div className="flex items-center gap-2 text-white/50 hover:text-orange-accent transition-colors duration-300 whitespace-nowrap">
-                  <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 2L2 9l10 3 10-3-10-7z" />
-                    <path d="M2 9v6c0 5.5 4.5 10 10 10s10-4.5 10-10V9" />
-                    <path d="M12 12v11" />
-                  </svg>
-                  <span className="text-[12px] font-black tracking-widest uppercase">WINGED FALCON</span>
-                </div>
-
-                {/* Yeti */}
-                <div className="flex items-center gap-2.5 text-white/50 hover:text-orange-accent transition-colors duration-300 whitespace-nowrap">
-                  <svg className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M4 14c0-4 3-7 8-7s8 3 8 7" strokeLinecap="round" />
-                    <path d="M6 14h12c0 2-2 4-6 4s-6-2-6-4z" />
-                    <circle cx="9" cy="11" r="1.5" fill="currentColor" />
-                    <circle cx="15" cy="11" r="1.5" fill="currentColor" />
-                    <path d="M11 15h2" strokeLinecap="round" />
-                  </svg>
-                  <span className="text-[12px] font-black tracking-widest uppercase">YETI</span>
-                </div>
-
-                {/* Ragneride */}
-                <div className="flex items-center gap-2.5 text-white/50 hover:text-cyan-accent transition-colors duration-300 whitespace-nowrap">
-                  <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M6 4h8a4 4 0 0 1 0 8H6v8" />
-                    <path d="M12 12l6 8" />
-                  </svg>
-                  <span className="text-[12px] font-black tracking-widest uppercase">Ragneride</span>
-                </div>
-
-                {/* PSA World Tour */}
-                <div className="flex items-center gap-2 text-white/50 hover:text-cyan-accent transition-colors duration-300 whitespace-nowrap">
-                  <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                    <path d="M2 12h20" />
-                  </svg>
-                  <span className="text-[12px] font-black tracking-widest uppercase">PSA WORLD TOUR</span>
-                </div>
-
-                {/* Sri Lanka Squash */}
-                <div className="flex items-center gap-2 text-white/50 hover:text-cyan-accent transition-colors duration-300 whitespace-nowrap">
-                  <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-                  </svg>
-                  <span className="text-[12px] font-black tracking-widest uppercase">SRI LANKA SQUASH</span>
-                </div>
-
-                {/* FitsAir */}
-                <div className="flex items-center gap-2 text-white/50 hover:text-cyan-accent transition-colors duration-300 whitespace-nowrap">
-                  <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
-                  </svg>
-                  <span className="text-[12px] font-black tracking-widest uppercase">FITSAIR</span>
-                </div>
-
-                {/* Dymec */}
-                <div className="flex items-center gap-2 text-white/50 hover:text-cyan-accent transition-colors duration-300 whitespace-nowrap">
-                  <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                    <path d="M2 10h3l2.5-6L11 18l3-12L17.5 14H22" />
-                  </svg>
-                  <span className="text-[12px] font-black tracking-widest uppercase">DYMEC</span>
-                </div>
-              </div>
-
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
       </main>
 
