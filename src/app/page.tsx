@@ -240,19 +240,19 @@ export default function Home() {
             READY TO COMPETE
           </div>
 
-          <div className="flex-1 space-y-6 text-center lg:text-left animate-fade-in z-10">
+          <div className="order-2 lg:order-1 flex-1 space-y-6 text-center lg:text-left animate-fade-in z-10">
             <div className="inline-flex items-center gap-2 rounded-full border border-cyan-accent/30 bg-cyan-accent/5 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-accent shadow-sm">
               <span className="h-2 w-2 rounded-full bg-cyan-accent animate-ping"></span>
               Sri Lanka • Squash • Elite Performance
             </div>
 
             <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl md:text-8xl text-white leading-none uppercase">
-              Ready To <br />
-              <span className="text-gradient-cyan-solid font-black">Compete</span>
+              {bioFirstName} <br />
+              <span className="text-gradient-cyan-solid font-black">{bioLastName}</span>
             </h1>
 
             <h2 className="text-xl font-bold uppercase tracking-[0.15em] text-orange-accent sm:text-2xl">
-              {bio.name} <span className="text-white">/</span> PSA Touring Professional
+              International Squash Player <span className="text-white">•</span> PSA Touring Professional
             </h2>
 
             <p className="mx-auto lg:mx-0 max-w-lg text-justify text-base text-white/90 leading-relaxed md:text-lg">
@@ -277,7 +277,7 @@ export default function Home() {
           </div>
 
           {/* Headshot/Action pose container */}
-          <div className="flex-1 flex justify-center items-center lg:justify-end z-10 relative">
+          <div className="order-1 lg:order-2 flex-1 flex justify-center items-center lg:justify-end z-10 relative">
             <div className="relative group">
               {/* Floating Badge 1 - Age/Height */}
               <div className="absolute -top-6 -left-6 z-20 animate-float-soft glass-card-layered px-5 py-3 border border-cyan-accent/20 flex items-center gap-3">
