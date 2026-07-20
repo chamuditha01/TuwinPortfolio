@@ -8,7 +8,9 @@
       "Bash(curl -s http://localhost:3000/api/gallery)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/gallery)",
       "Bash(curl -s -o /dev/null -w \"media: %{http_code}\\\\n\" http://localhost:3000/media)",
-      "Bash(curl -s http://localhost:3000/)"
+      "Bash(curl -s http://localhost:3000/)",
+      "Bash(curl -s -m 20 -o /dev/null -w \"homepage: %{http_code}\\\\n\" http://localhost:3000/)",
+      "Read(//tmp/**)"
     ]
   }
 }

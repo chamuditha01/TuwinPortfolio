@@ -38,6 +38,7 @@ export default function Home() {
     status: string;
     logos: string[];
   }[]>([]);
+  const [coaches, setCoaches] = useState<{ name: string; profile: string[]; biography: string; imageUrl: string }[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -119,6 +120,26 @@ export default function Home() {
       })
       .catch(() => {
         // Keep empty tournaments list on failure
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch('/api/coach')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to load coach');
+        return res.json();
+      })
+      .then((data: { coaches: typeof coaches }) => {
+        if (!cancelled) setCoaches(data.coaches);
+      })
+      .catch(() => {
+        // Keep empty coaches list on failure
       });
 
     return () => {
@@ -643,6 +664,71 @@ export default function Home() {
         {rankings.length > 0 && (
           <section className="py-16 border-b border-white/5 relative z-10">
             <RankingChart rankings={rankings} />
+          </section>
+        )}
+
+        {/* Coach & Club */}
+        {coaches.length > 0 && (
+          <section className="py-16 border-b border-white/5 relative z-10">
+            <div className="text-center md:text-left mb-10">
+              <p className="text-xs font-bold uppercase tracking-[0.3em] text-cyan-accent mb-2">Behind The Game</p>
+              <h3 className="text-3xl font-extrabold tracking-tight text-white uppercase md:text-4xl">
+                Coach &amp; Club
+              </h3>
+            </div>
+
+            <div className="space-y-8">
+              {coaches.map((coach, idx) => (
+                <div
+                  key={`${coach.name}-${idx}`}
+                  className="glass-card-layered p-8 relative overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-8"
+                >
+                  <div className="absolute inset-0 opacity-[0.02] wave-contour-pattern pointer-events-none"></div>
+
+                  {/* Left: Image + Name + Biography */}
+                  <div className="relative z-10 space-y-4 text-center md:text-left">
+                    {coach.imageUrl && (
+                      <div className="relative h-48 w-48 md:h-64 md:w-64 mx-auto md:mx-0 rounded-2xl overflow-hidden border border-cyan-accent/20 bg-white/5">
+                        <Image
+                          src={coach.imageUrl}
+                          alt={coach.name}
+                          fill
+                          sizes="(max-width: 768px) 192px, 256px"
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
+                    <h4 className="text-lg font-bold uppercase tracking-wide text-white">{coach.name}</h4>
+                    {coach.biography && (
+                      <p className="text-sm text-slate-300 leading-relaxed text-justify">{coach.biography}</p>
+                    )}
+                  </div>
+
+                  {/* Right: Profile Points */}
+                  {coach.profile.length > 0 && (
+                    <div className="relative z-10">
+                      <h5 className="text-xs font-bold uppercase tracking-[0.3em] text-cyan-accent mb-4">Profile</h5>
+                      <ul className="space-y-2.5">
+                        {coach.profile.map((point, pIdx) => (
+                          <li key={pIdx} className="flex items-start gap-2 text-sm text-slate-300">
+                            <svg
+                              className="h-4 w-4 flex-shrink-0 mt-0.5 text-cyan-accent"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={2.5}
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span className="text-justify">{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </section>
         )}
 
