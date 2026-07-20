@@ -233,7 +233,7 @@ export default function Home() {
       <main className="relative z-10 mx-auto w-full max-w-6xl px-6">
 
         {/* 1. Hero Section */}
-        <section id="home" className="relative flex min-h-[90vh] flex-col items-center justify-center py-16 lg:py-24 lg:flex-row lg:justify-between gap-12 border-b border-white/5">
+        <section id="home" className="relative overflow-hidden flex min-h-[90vh] flex-col items-center justify-center py-16 lg:py-24 lg:flex-row lg:justify-between gap-12 border-b border-white/5">
 
           {/* Large Ghosted Background Text */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none opacity-[0.02] text-[7rem] sm:text-[11rem] md:text-[14rem] font-black uppercase tracking-widest text-cyan-accent z-0 text-center w-full leading-none">
@@ -368,7 +368,7 @@ export default function Home() {
         </section>
 
         {/* 3. Biography Section */}
-        <section id="bio" className="py-24 border-b border-white/5 relative">
+        <section id="bio" className="py-24 border-b border-white/5 relative overflow-hidden">
 
           {/* Large Ghosted Background Text */}
           <div className="absolute top-1/4 right-0 select-none pointer-events-none opacity-[0.015] text-[8rem] sm:text-[12rem] font-black uppercase tracking-widest text-white z-0">
@@ -498,7 +498,7 @@ export default function Home() {
         </section>
 
         {/* 4. Career Timeline & Achievements */}
-        <section id="career" className="py-24 border-b border-white/5 space-y-16 relative">
+        <section id="career" className="py-24 border-b border-white/5 space-y-16 relative overflow-hidden">
 
           {/* Large Ghosted Background Text */}
           <div className="absolute top-1/2 left-0 -translate-y-1/2 select-none pointer-events-none opacity-[0.015] text-[7rem] sm:text-[10rem] font-black uppercase tracking-widest text-white z-0">

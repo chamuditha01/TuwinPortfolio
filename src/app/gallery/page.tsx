@@ -15,6 +15,7 @@ export default function Gallery() {
   const [categories, setCategories] = useState<GalleryCategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -39,6 +40,31 @@ export default function Gallery() {
       cancelled = true;
     };
   }, []);
+
+  const allImages = categories.flatMap((category) =>
+    category.images.map((src, idx) => ({
+      src,
+      alt: `${category.label} gallery photo ${idx + 1}`,
+    }))
+  );
+
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightboxIndex(null);
+      if (e.key === 'ArrowRight') setLightboxIndex((i) => (i === null ? i : (i + 1) % allImages.length));
+      if (e.key === 'ArrowLeft') setLightboxIndex((i) => (i === null ? i : (i - 1 + allImages.length) % allImages.length));
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [lightboxIndex, allImages.length]);
 
   // Navigation Links - points back to homepage hashes
   const navLinks = [
@@ -157,8 +183,12 @@ export default function Gallery() {
           </div>
         ) : (
           <>
-            {categories.map((category, catIdx) => {
+            {(() => {
+              let imageCursor = 0;
+              return categories.map((category, catIdx) => {
               const isOrange = catIdx % 2 === 1;
+              const categoryStart = imageCursor;
+              imageCursor += category.images.length;
               return (
                 <section key={category.key} className="relative z-10 space-y-6">
                   <div className="flex items-center gap-4">
@@ -174,9 +204,11 @@ export default function Gallery() {
                   {category.images.length > 0 ? (
                     <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                       {category.images.map((src, idx) => (
-                        <div
+                        <button
                           key={`${category.key}-${idx}`}
-                          className={`relative aspect-square overflow-hidden rounded-2xl group ${isOrange ? 'glass-card-layered-orange' : 'glass-card-layered'}`}
+                          type="button"
+                          onClick={() => setLightboxIndex(categoryStart + idx)}
+                          className={`relative aspect-square overflow-hidden rounded-2xl group cursor-pointer ${isOrange ? 'glass-card-layered-orange' : 'glass-card-layered'}`}
                         >
                           <Image
                             src={src}
@@ -185,7 +217,7 @@ export default function Gallery() {
                             sizes="(max-width: 768px) 50vw, 25vw"
                             className="object-cover transition-transform duration-500 group-hover:scale-105"
                           />
-                        </div>
+                        </button>
                       ))}
                     </div>
                   ) : (
@@ -195,7 +227,8 @@ export default function Gallery() {
                   )}
                 </section>
               );
-            })}
+              });
+            })()}
           </>
         )}
 
@@ -212,7 +245,7 @@ export default function Gallery() {
               Professional Squash Athlete Portfolio
             </p>
             <div className="flex gap-4 mt-3">
-              <a href="#" className="p-2 bg-white/5 rounded-full text-cyan-accent hover:bg-cyan-accent hover:text-black transition-all">
+              <a href="https://www.instagram.com/tuwin.herath?igsh=MjZmNG84NDF5dGdn" className="p-2 bg-white/5 rounded-full text-cyan-accent hover:bg-cyan-accent hover:text-black transition-all">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-instagram" viewBox="0 0 16 16">
                   <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04 1.23.328 1.97.772 2.392A3.9 3.9 0 0 0 1.417 14.6c.51.198 1.09.333 1.942.372C5.555 14.99 5.827 15 8.001 15s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.42.773-1.16.772-2.392.04-.852.048-1.124.048-3.297 0-2.174-.01-2.446-.048-3.297-.04-1.23-.328-1.97-.772-2.392a3.9 3.9 0 0 0-1.417-.923c-.51-.198-1.09-.333-1.942-.372C10.443.01 10.172 0 7.999 0zm-.08 1.44h.08c2.113 0 2.36.007 3.194.045.765.035 1.18.164 1.457.272.369.144.632.316.91.593s.45.541.592.91c.108.277.237.692.272 1.457.038.834.045 1.077.045 3.193v.08c0 2.113-.007 2.36-.045 3.194-.035.765-.164 1.18-.272 1.457a3.9 3.9 0 0 1-.91.593c-.277.108-.692.237-1.457.272-.834.038-1.077.045-3.193.045h-.08c-2.113 0-2.36-.007-3.194-.045-.765-.035-1.18-.164-1.457-.272a3.9 3.9 0 0 1-.91-.593c-.277-.108-.692-.237-1.457-.272-.834-.038-1.077-.045-3.193-.045zm0 2.456a3.906 3.906 0 1 0 0 7.812 3.906 3.906 0 0 0 0-7.812m0 5.837a1.931 1.931 0 1 1 0-3.862 1.931 1.931 0 0 1 0 3.862M4.93-4.831a1.156 1.156 0 1 1-2.31 0 1.156 1.156 0 0 1 2.31 0" />
                 </svg>
@@ -234,6 +267,76 @@ export default function Gallery() {
           </div>
         </div>
       </footer>
+
+      {/* Lightbox */}
+      {lightboxIndex !== null && allImages[lightboxIndex] && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 sm:p-8"
+          onClick={() => setLightboxIndex(null)}
+        >
+          {/* Close button */}
+          <button
+            type="button"
+            onClick={() => setLightboxIndex(null)}
+            aria-label="Close"
+            className="absolute top-4 right-4 sm:top-6 sm:right-6 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors cursor-pointer"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          {/* Prev button */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightboxIndex((i) => (i === null ? i : (i - 1 + allImages.length) % allImages.length));
+            }}
+            aria-label="Previous image"
+            className="absolute left-2 sm:left-6 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors cursor-pointer"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          {/* Next button */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightboxIndex((i) => (i === null ? i : (i + 1) % allImages.length));
+            }}
+            aria-label="Next image"
+            className="absolute right-2 sm:right-6 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors cursor-pointer"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          {/* Image */}
+          <div
+            className="relative h-full max-h-[85vh] w-full max-w-4xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={allImages[lightboxIndex].src}
+              alt={allImages[lightboxIndex].alt}
+              fill
+              sizes="100vw"
+              className="object-contain"
+              priority
+            />
+          </div>
+
+          {/* Counter */}
+          <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 text-xs font-bold uppercase tracking-widest text-white/60">
+            {lightboxIndex + 1} / {allImages.length}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
