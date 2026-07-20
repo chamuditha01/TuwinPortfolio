@@ -69,7 +69,8 @@ export default function RankingChart({ rankings }: { rankings: RankingPoint[] })
 
   const latest = rankings[rankings.length - 1];
   const previous = rankings.length > 1 ? rankings[rankings.length - 2] : null;
-  const delta = previous ? latest.ranking - previous.ranking : 0;
+  // Positive = rank improved (lower number); negative = rank dropped (higher number)
+  const delta = previous ? previous.ranking - latest.ranking : 0;
 
   const rankValues = filtered.map((r) => r.ranking);
   const minRank = Math.min(...rankValues);
