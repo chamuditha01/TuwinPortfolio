@@ -71,6 +71,7 @@ export default function RankingChart({ rankings }: { rankings: RankingPoint[] })
   const previous = rankings.length > 1 ? rankings[rankings.length - 2] : null;
   // Positive = rank improved (lower number); negative = rank dropped (higher number)
   const delta = previous ? previous.ranking - latest.ranking : 0;
+  const peakRank = Math.min(...rankings.map((r) => r.ranking));
 
   const rankValues = filtered.map((r) => r.ranking);
   const minRank = Math.min(...rankValues);
@@ -127,15 +128,22 @@ export default function RankingChart({ rankings }: { rankings: RankingPoint[] })
           <h3 className="text-2xl font-extrabold tracking-tight text-white uppercase">World Ranking</h3>
         </div>
 
-        <div className="text-right">
-          <div className="text-[9px] uppercase font-bold text-slate-500 tracking-wider">Current</div>
-          <div className="flex items-baseline gap-2 justify-end">
-            <span className="text-3xl font-extrabold text-white tracking-tight">#{latest.ranking}</span>
-            {previous && delta !== 0 && (
-              <span className={`text-sm font-bold ${delta > 0 ? 'text-green-400' : 'text-red-400'}`}>
-                ({delta > 0 ? '+' : ''}{delta})
-              </span>
-            )}
+        <div className="flex items-start gap-8">
+          <div className="text-right">
+            <div className="text-[9px] uppercase font-bold text-slate-500 tracking-wider">Current</div>
+            <div className="flex items-baseline gap-2 justify-end">
+              <span className="text-3xl font-extrabold text-white tracking-tight">#{latest.ranking}</span>
+              {previous && delta !== 0 && (
+                <span className={`text-sm font-bold ${delta > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                  ({delta > 0 ? '+' : ''}{delta})
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="text-right">
+            <div className="text-[9px] uppercase font-bold text-slate-500 tracking-wider">Highest Rank</div>
+            <span className="text-3xl font-extrabold text-cyan-accent tracking-tight">#{peakRank}</span>
           </div>
         </div>
       </div>
