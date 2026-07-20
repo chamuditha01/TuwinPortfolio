@@ -39,6 +39,11 @@ export default function Home() {
     logos: string[];
   }[]>([]);
   const [coaches, setCoaches] = useState<{ name: string; profile: string[]; biography: string; imageUrl: string }[]>([]);
+  const [contact, setContact] = useState({
+    locations: 'Malabe, Sri Lanka / Shanghai, China',
+    email: 'tuwinosanda@gmail.com',
+    phoneNumbers: ['+94771182429', '+8613002144061'],
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -140,6 +145,31 @@ export default function Home() {
       })
       .catch(() => {
         // Keep empty coaches list on failure
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch('/api/contact')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to load contact');
+        return res.json();
+      })
+      .then((data: { contact: { locations?: string; email?: string; phoneNumbers?: string[] } }) => {
+        if (cancelled) return;
+        setContact((prev) => ({
+          locations: data.contact.locations || prev.locations,
+          email: data.contact.email || prev.email,
+          phoneNumbers: data.contact.phoneNumbers && data.contact.phoneNumbers.length > 0 ? data.contact.phoneNumbers : prev.phoneNumbers,
+        }));
+      })
+      .catch(() => {
+        // Keep default contact values on failure
       });
 
     return () => {
@@ -517,7 +547,7 @@ export default function Home() {
                     )}
                     {t.tournamentSize && (
                       <span className="inline-block rounded-full bg-white/5 text-slate-300 px-3 py-1 text-[9px] font-extrabold uppercase tracking-widest">
-                        Size {t.tournamentSize}
+                        {t.tournamentSize}
                       </span>
                     )}
                     <span className="inline-block rounded-full bg-cyan-accent/10 text-cyan-accent px-3 py-1 text-[9px] font-extrabold uppercase tracking-widest">
@@ -1007,7 +1037,7 @@ export default function Home() {
                   </div>
                   <div>
                     <div className="text-[9px] uppercase font-bold text-slate-500 tracking-wider">Locations</div>
-                    <div className="text-sm text-slate-200 font-semibold">Malabe, Sri Lanka / Shanghai, China</div>
+                    <div className="text-sm text-slate-200 font-semibold">{contact.locations}</div>
                   </div>
                 </div>
 
@@ -1020,8 +1050,8 @@ export default function Home() {
                   </div>
                   <div>
                     <div className="text-[9px] uppercase font-bold text-slate-500 tracking-wider">Email Address</div>
-                    <a href="mailto:tuwinosanda@gmail.com" className="text-sm text-slate-200 hover:text-cyan-accent transition-colors font-semibold">
-                      tuwinosanda@gmail.com
+                    <a href={`mailto:${contact.email}`} className="text-sm text-slate-200 hover:text-cyan-accent transition-colors font-semibold">
+                      {contact.email}
                     </a>
                   </div>
                 </div>
@@ -1036,9 +1066,12 @@ export default function Home() {
                   <div>
                     <div className="text-[9px] uppercase font-bold text-slate-500 tracking-wider">Phone Numbers</div>
                     <div className="text-sm text-slate-200 font-semibold">
-                      <a href="tel:+94771182429" className="hover:text-cyan-accent transition-colors">+94 77 118 2429</a>
-                      <span className="mx-2 text-slate-600">/</span>
-                      <a href="tel:+8613002144061" className="hover:text-cyan-accent transition-colors">+86 1300 214 4061</a>
+                      {contact.phoneNumbers.map((phone, idx) => (
+                        <React.Fragment key={phone}>
+                          {idx > 0 && <span className="mx-2 text-slate-600">/</span>}
+                          <a href={`tel:${phone}`} className="hover:text-cyan-accent transition-colors">{phone}</a>
+                        </React.Fragment>
+                      ))}
                     </div>
                   </div>
                 </div>
