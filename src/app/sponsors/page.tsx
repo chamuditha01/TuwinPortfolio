@@ -46,6 +46,7 @@ export default function Sponsors() {
     { name: 'Home', href: '/' },
     { name: 'About', href: '/#about' },
     { name: 'Career', href: '/#career' },
+    { name: 'Tournaments', href: '/tournaments' },
     { name: 'Media', href: '/media' },
     { name: 'Gallery', href: '/gallery' },
     { name: 'Sponsors', href: '/sponsors' },

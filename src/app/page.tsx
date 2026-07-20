@@ -3,6 +3,22 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import RankingChart from './components/RankingChart';
+
+function formatTournamentDateRange(startDate: string, endDate: string): string {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  if (Number.isNaN(start.getTime())) return startDate;
+  if (Number.isNaN(end.getTime()) || endDate === startDate) {
+    return start.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+  const sameMonth = start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear();
+  const startLabel = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const endLabel = sameMonth
+    ? end.toLocaleDateString('en-US', { day: 'numeric' })
+    : end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return `${startLabel}–${endLabel}, ${end.getFullYear()}`;
+}
 
 export default function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -11,6 +27,17 @@ export default function Home() {
   const [inquiryStatus, setInquiryStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [bio, setBio] = useState({ name: 'Tuwin Herath', worldRank: '316', age: '26' });
   const [sponsors, setSponsors] = useState<{ name: string; imageUrl: string; status: string; description: string }[]>([]);
+  const [rankings, setRankings] = useState<{ date: string; ranking: number }[]>([]);
+  const [tournaments, setTournaments] = useState<{
+    name: string;
+    venue: string;
+    tournamentSize: string;
+    startDate: string;
+    endDate: string;
+    category: string;
+    status: string;
+    logos: string[];
+  }[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -50,6 +77,48 @@ export default function Home() {
       })
       .catch(() => {
         // Keep empty sponsors list on failure
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch('/api/rankings')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to load rankings');
+        return res.json();
+      })
+      .then((data: { rankings: { date: string; ranking: number }[] }) => {
+        if (!cancelled) setRankings(data.rankings);
+      })
+      .catch(() => {
+        // Keep empty rankings list on failure
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch('/api/tournaments')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to load tournaments');
+        return res.json();
+      })
+      .then((data: { tournaments: (typeof tournaments[number] & { finishedPosition?: string })[] }) => {
+        if (!cancelled) {
+          setTournaments(data.tournaments.filter((t) => t.status.toLowerCase() === 'upcoming'));
+        }
+      })
+      .catch(() => {
+        // Keep empty tournaments list on failure
       });
 
     return () => {
@@ -127,6 +196,7 @@ export default function Home() {
   const navLinks = [
     { name: 'About', href: '#about' },
     { name: 'Career', href: '#career' },
+    { name: 'Tournaments', href: '/tournaments' },
     { name: 'Media', href: '/media' },
     { name: 'Gallery', href: '/gallery' },
     { name: 'Partners', href: '#partners' },
@@ -367,6 +437,78 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Upcoming Tournaments */}
+        {tournaments.length > 0 && (
+          <section className="py-16 border-b border-white/5 relative z-10">
+            <div className="text-center md:text-left mb-10">
+              <p className="text-xs font-bold uppercase tracking-[0.3em] text-cyan-accent mb-2">Tour Calendar</p>
+              <h3 className="text-3xl font-extrabold tracking-tight text-white uppercase md:text-4xl">
+                Upcoming Tournaments
+              </h3>
+            </div>
+
+            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {tournaments.map((t, idx) => (
+                <div
+                  key={`${t.name}-${idx}`}
+                  className="glass-card-layered p-6 relative overflow-hidden group flex flex-col gap-4"
+                >
+                  <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-accent/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                  <div className="flex items-start justify-between gap-3">
+                    <h4 className="text-lg font-bold uppercase tracking-wide text-white leading-snug">{t.name}</h4>
+                    {t.logos.length > 0 && (
+                      <div className="flex-shrink-0 flex items-center gap-1.5">
+                        {t.logos.map((logo, logoIdx) => (
+                          <div key={logoIdx} className="relative h-7 w-7 rounded-md overflow-hidden bg-white/95">
+                            <Image
+                              src={logo}
+                              alt={`${t.name} logo ${logoIdx + 1}`}
+                              fill
+                              sizes="28px"
+                              className="object-contain p-0.5"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {t.venue && (
+                    <div className="flex items-center gap-2 text-xs text-slate-400">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0 text-cyan-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      {t.venue}
+                    </div>
+                  )}
+
+                  <div className="text-xs text-slate-400">
+                    {formatTournamentDateRange(t.startDate, t.endDate)}
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2 mt-auto pt-2 border-t border-white/5">
+                    {t.category && (
+                      <span className="inline-block rounded-full bg-orange-accent/10 text-orange-accent px-3 py-1 text-[9px] font-extrabold uppercase tracking-widest">
+                        {t.category}
+                      </span>
+                    )}
+                    {t.tournamentSize && (
+                      <span className="inline-block rounded-full bg-white/5 text-slate-300 px-3 py-1 text-[9px] font-extrabold uppercase tracking-widest">
+                        Size {t.tournamentSize}
+                      </span>
+                    )}
+                    <span className="inline-block rounded-full bg-cyan-accent/10 text-cyan-accent px-3 py-1 text-[9px] font-extrabold uppercase tracking-widest">
+                      Upcoming
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* 3. Biography Section */}
         <section id="bio" className="py-24 border-b border-white/5 relative overflow-hidden">
 
@@ -496,6 +638,13 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* World Ranking Chart */}
+        {rankings.length > 0 && (
+          <section className="py-16 border-b border-white/5 relative z-10">
+            <RankingChart rankings={rankings} />
+          </section>
+        )}
 
         {/* 4. Career Timeline & Achievements */}
         <section id="career" className="py-24 border-b border-white/5 space-y-16 relative overflow-hidden">
