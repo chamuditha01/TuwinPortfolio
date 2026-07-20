@@ -39,6 +39,7 @@ export default function Home() {
     logos: string[];
   }[]>([]);
   const [coaches, setCoaches] = useState<{ name: string; profile: string[]; biography: string; imageUrl: string }[]>([]);
+  const [expandedBios, setExpandedBios] = useState<Set<number>>(new Set());
   const [contact, setContact] = useState({
     locations: 'Malabe, Sri Lanka / Shanghai, China',
     email: 'tuwinosanda@gmail.com',
@@ -493,13 +494,15 @@ export default function Home() {
           <section className="py-16 border-b border-white/5 relative z-10">
             <div className="text-center md:text-left mb-10">
               <p className="text-xs font-bold uppercase tracking-[0.3em] text-cyan-accent mb-2">Tour Calendar</p>
-              <h3 className="text-3xl font-extrabold tracking-tight text-white uppercase md:text-4xl">
-                Upcoming Tournaments
-              </h3>
+              <Link href="/tournaments" className="inline-block group">
+                <h3 className="text-3xl font-extrabold tracking-tight text-white uppercase md:text-4xl group-hover:text-cyan-accent transition-colors">
+                  Upcoming Tournaments
+                </h3>
+              </Link>
             </div>
 
             <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-              {tournaments.map((t, idx) => (
+              {tournaments.slice(0, 3).map((t, idx) => (
                 <div
                   key={`${t.name}-${idx}`}
                   className="glass-card-layered p-6 relative overflow-hidden group flex flex-col gap-4"
@@ -730,7 +733,28 @@ export default function Home() {
                     )}
                     <h4 className="text-lg font-bold uppercase tracking-wide text-white">{coach.name}</h4>
                     {coach.biography && (
-                      <p className="text-sm text-slate-300 leading-relaxed text-justify">{coach.biography}</p>
+                      <div>
+                        <p className={`text-sm text-slate-300 leading-relaxed text-justify ${expandedBios.has(idx) ? '' : 'line-clamp-5'}`}>
+                          {coach.biography}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setExpandedBios((prev) => {
+                              const next = new Set(prev);
+                              if (next.has(idx)) {
+                                next.delete(idx);
+                              } else {
+                                next.add(idx);
+                              }
+                              return next;
+                            });
+                          }}
+                          className="mt-1 text-xs font-bold uppercase tracking-widest text-cyan-accent hover:text-cyan-300 transition-colors cursor-pointer"
+                        >
+                          {expandedBios.has(idx) ? 'See Less' : 'See More'}
+                        </button>
+                      </div>
                     )}
                   </div>
 
