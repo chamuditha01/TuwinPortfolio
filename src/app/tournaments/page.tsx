@@ -263,7 +263,7 @@ export default function Tournaments() {
                     )}
                     {t.tournamentSize && (
                       <span className="inline-block rounded-full bg-white/5 text-slate-300 px-3 py-1 text-[9px] font-extrabold uppercase tracking-widest">
-                        Size {t.tournamentSize}
+                        {t.tournamentSize}
                       </span>
                     )}
                     <span className={`inline-block rounded-full px-3 py-1 text-[9px] font-extrabold uppercase tracking-widest ${activeTab === 'upcoming' ? 'bg-cyan-accent/10 text-cyan-accent' : 'bg-white/5 text-slate-300'}`}>
