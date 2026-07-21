@@ -47,6 +47,7 @@ export default function Home() {
   const [expandedBios, setExpandedBios] = useState<Set<number>>(new Set());
   const [careerAchievements, setCareerAchievements] = useState<{ title: string; heading: string; description: string; footer: string }[]>([]);
   const [timelineData, setTimelineData] = useState<{ year: string; title: string; description: string; tag: string; icon: string }[]>([]);
+  const [competencyPoints, setCompetencyPoints] = useState<string[]>([]);
   const [contact, setContact] = useState({
     locations: 'Malabe, Sri Lanka / Shanghai, China',
     email: 'tuwinosanda@gmail.com',
@@ -219,6 +220,26 @@ export default function Home() {
       })
       .catch(() => {
         // Keep empty timeline list on failure
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch('/api/competency-blueprint')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to load competency blueprint');
+        return res.json();
+      })
+      .then((data: { points: string[] }) => {
+        if (!cancelled) setCompetencyPoints(data.points);
+      })
+      .catch(() => {
+        // Keep empty competency points list on failure
       });
 
     return () => {
@@ -850,22 +871,12 @@ export default function Home() {
             <div>
               <h4 className="text-lg font-extrabold uppercase tracking-wider text-white mb-4">Competency Blueprint</h4>
               <div className="space-y-3">
-                <div className="flex items-center gap-3 rounded-xl border border-white/5 bg-[#0d111a] px-4 py-3.5 hover:border-cyan-accent/30 transition-all duration-300">
-                  <div className="h-2.5 w-2.5 rounded-full bg-cyan-accent shadow-sm shadow-cyan-accent"></div>
-                  <span className="text-xs uppercase font-bold tracking-wider text-slate-200">Touring Professional Competition</span>
-                </div>
-                <div className="flex items-center gap-3 rounded-xl border border-white/5 bg-[#0d111a] px-4 py-3.5 hover:border-cyan-accent/30 transition-all duration-300">
-                  <div className="h-2.5 w-2.5 rounded-full bg-cyan-accent shadow-sm shadow-cyan-accent"></div>
-                  <span className="text-xs uppercase font-bold tracking-wider text-slate-200">Elite Team Captaincy &amp; Leadership</span>
-                </div>
-                <div className="flex items-center gap-3 rounded-xl border border-white/5 bg-[#0d111a] px-4 py-3.5 hover:border-cyan-accent/30 transition-all duration-300">
-                  <div className="h-2.5 w-2.5 rounded-full bg-cyan-accent shadow-sm shadow-cyan-accent"></div>
-                  <span className="text-xs uppercase font-bold tracking-wider text-slate-200">Game Logic Planning &amp; Strategy</span>
-                </div>
-                <div className="flex items-center gap-3 rounded-xl border border-white/5 bg-[#0d111a] px-4 py-3.5 hover:border-cyan-accent/30 transition-all duration-300">
-                  <div className="h-2.5 w-2.5 rounded-full bg-cyan-accent shadow-sm shadow-cyan-accent"></div>
-                  <span className="text-xs uppercase font-bold tracking-wider text-slate-200">WSF Coaching &amp; Sports Admin</span>
-                </div>
+                {competencyPoints.map((point, idx) => (
+                  <div key={idx} className="flex items-center gap-3 rounded-xl border border-white/5 bg-[#0d111a] px-4 py-3.5 hover:border-cyan-accent/30 transition-all duration-300">
+                    <div className="h-2.5 w-2.5 rounded-full bg-cyan-accent shadow-sm shadow-cyan-accent"></div>
+                    <span className="text-xs uppercase font-bold tracking-wider text-slate-200">{point}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
