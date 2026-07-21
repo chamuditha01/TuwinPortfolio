@@ -58,6 +58,9 @@ export default function Home() {
     email: 'tuwinosanda@gmail.com',
     phoneNumbers: ['+94771182429', '+8613002144061'],
   });
+  const TOTAL_FETCHES = 11;
+  const [loadedCount, setLoadedCount] = useState(0);
+  const isPageLoading = loadedCount < TOTAL_FETCHES;
 
   useEffect(() => {
     let cancelled = false;
@@ -78,6 +81,9 @@ export default function Home() {
       })
       .catch(() => {
         // Keep default bio values on failure
+      })
+      .finally(() => {
+        if (!cancelled) setLoadedCount((c) => c + 1);
       });
 
     return () => {
@@ -98,6 +104,9 @@ export default function Home() {
       })
       .catch(() => {
         // Keep empty sponsors list on failure
+      })
+      .finally(() => {
+        if (!cancelled) setLoadedCount((c) => c + 1);
       });
 
     return () => {
@@ -118,6 +127,9 @@ export default function Home() {
       })
       .catch(() => {
         // Keep empty rankings list on failure
+      })
+      .finally(() => {
+        if (!cancelled) setLoadedCount((c) => c + 1);
       });
 
     return () => {
@@ -140,6 +152,9 @@ export default function Home() {
       })
       .catch(() => {
         // Keep empty tournaments list on failure
+      })
+      .finally(() => {
+        if (!cancelled) setLoadedCount((c) => c + 1);
       });
 
     return () => {
@@ -160,6 +175,9 @@ export default function Home() {
       })
       .catch(() => {
         // Keep empty coaches list on failure
+      })
+      .finally(() => {
+        if (!cancelled) setLoadedCount((c) => c + 1);
       });
 
     return () => {
@@ -185,6 +203,9 @@ export default function Home() {
       })
       .catch(() => {
         // Keep default contact values on failure
+      })
+      .finally(() => {
+        if (!cancelled) setLoadedCount((c) => c + 1);
       });
 
     return () => {
@@ -205,6 +226,9 @@ export default function Home() {
       })
       .catch(() => {
         // Keep empty career achievements list on failure
+      })
+      .finally(() => {
+        if (!cancelled) setLoadedCount((c) => c + 1);
       });
 
     return () => {
@@ -225,6 +249,9 @@ export default function Home() {
       })
       .catch(() => {
         // Keep empty timeline list on failure
+      })
+      .finally(() => {
+        if (!cancelled) setLoadedCount((c) => c + 1);
       });
 
     return () => {
@@ -245,6 +272,9 @@ export default function Home() {
       })
       .catch(() => {
         // Keep empty competency points list on failure
+      })
+      .finally(() => {
+        if (!cancelled) setLoadedCount((c) => c + 1);
       });
 
     return () => {
@@ -265,6 +295,9 @@ export default function Home() {
       })
       .catch(() => {
         // Keep empty training history list on failure
+      })
+      .finally(() => {
+        if (!cancelled) setLoadedCount((c) => c + 1);
       });
 
     return () => {
@@ -289,6 +322,9 @@ export default function Home() {
       })
       .catch(() => {
         // Keep default biography values on failure
+      })
+      .finally(() => {
+        if (!cancelled) setLoadedCount((c) => c + 1);
       });
 
     return () => {
@@ -329,6 +365,14 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen bg-[#06070a] text-white font-sans selection:bg-cyan-accent selection:text-black">
+      {/* Loading Screen */}
+      {isPageLoading && (
+        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center gap-4 bg-[#06070a]">
+          <div className="h-12 w-12 rounded-full border-2 border-cyan-accent/20 border-t-cyan-accent animate-spin"></div>
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-slate-400">Loading</p>
+        </div>
+      )}
+
       {/* Background aurora gradients */}
       <div className="aurora-bg"></div>
 
