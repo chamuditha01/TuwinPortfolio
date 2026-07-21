@@ -48,6 +48,7 @@ export default function Home() {
   const [careerAchievements, setCareerAchievements] = useState<{ title: string; heading: string; description: string; footer: string }[]>([]);
   const [timelineData, setTimelineData] = useState<{ year: string; title: string; description: string; tag: string; icon: string }[]>([]);
   const [competencyPoints, setCompetencyPoints] = useState<string[]>([]);
+  const [trainingHistory, setTrainingHistory] = useState<{ title: string; heading: string; description: string }[]>([]);
   const [contact, setContact] = useState({
     locations: 'Malabe, Sri Lanka / Shanghai, China',
     email: 'tuwinosanda@gmail.com',
@@ -240,6 +241,26 @@ export default function Home() {
       })
       .catch(() => {
         // Keep empty competency points list on failure
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch('/api/training-history')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to load training history');
+        return res.json();
+      })
+      .then((data: { trainingHistory: typeof trainingHistory }) => {
+        if (!cancelled) setTrainingHistory(data.trainingHistory);
+      })
+      .catch(() => {
+        // Keep empty training history list on failure
       });
 
     return () => {
@@ -883,26 +904,20 @@ export default function Home() {
             <div>
               <h4 className="text-lg font-extrabold uppercase tracking-wider text-white mb-4">Elite Training History</h4>
               <div className="border-l-2 border-cyan-accent/20 pl-6 space-y-6 py-2">
-                <div className="relative group">
-                  <div className="absolute -left-[31px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#06070a] border-2 border-cyan-accent">
-                    <div className="h-1.5 w-1.5 rounded-full bg-cyan-accent"></div>
+                {trainingHistory.map((item, idx) => (
+                  <div key={idx} className="relative group">
+                    <div className="absolute -left-[31px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#06070a] border-2 border-cyan-accent">
+                      <div className="h-1.5 w-1.5 rounded-full bg-cyan-accent"></div>
+                    </div>
+                    <div>
+                      {item.title && (
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-orange-accent">{item.title}</span>
+                      )}
+                      <h5 className="text-sm font-bold text-white uppercase">{item.heading}</h5>
+                      <p className="text-xs text-slate-400 mt-1">{item.description}</p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-orange-accent">Since 2024</span>
-                    <h5 className="text-sm font-bold text-white uppercase">START Academy India Camp</h5>
-                    <p className="text-xs text-slate-400 mt-1">High-performance summer training camps focused on advanced court agility and match endurance in Mumbai.</p>
-                  </div>
-                </div>
-                <div className="relative group">
-                  <div className="absolute -left-[31px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#06070a] border-2 border-cyan-accent">
-                    <div className="h-1.5 w-1.5 rounded-full bg-cyan-accent"></div>
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-orange-accent">Global Exchanges</span>
-                    <h5 className="text-sm font-bold text-white uppercase">International Squad Exchanges</h5>
-                    <p className="text-xs text-slate-400 mt-1">Consistent joint squad preparations across Malaysia, Qatar, Australia, New Zealand, China, and the Czech Republic.</p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
