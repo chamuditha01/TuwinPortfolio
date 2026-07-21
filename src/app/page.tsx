@@ -49,6 +49,10 @@ export default function Home() {
   const [timelineData, setTimelineData] = useState<{ year: string; title: string; description: string; tag: string; icon: string }[]>([]);
   const [competencyPoints, setCompetencyPoints] = useState<string[]>([]);
   const [trainingHistory, setTrainingHistory] = useState<{ title: string; heading: string; description: string }[]>([]);
+  const [biography, setBiography] = useState<{ description: string; highlights: { title: string; heading: string; description: string }[] }>({
+    description: 'Representing the Sri Lankan flag on the international stage, Tuwin has spent over a decade pushing the physical and mental limits of competitive squash. A former Head Boy and Best Sportsman of D.S. Senanayake College, he was awarded the Deshabandu title at age 21 for his outstanding athletic achievements and community service during the global pandemic. Currently competing on the PSA Squash Tour, Tuwin continues to elevate the standard of Sri Lankan squash globally, backed by professional training regimes, clean sport practices, and active community outreach.',
+    highlights: [],
+  });
   const [contact, setContact] = useState({
     locations: 'Malabe, Sri Lanka / Shanghai, China',
     email: 'tuwinosanda@gmail.com',
@@ -261,6 +265,30 @@ export default function Home() {
       })
       .catch(() => {
         // Keep empty training history list on failure
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch('/api/biography')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to load biography');
+        return res.json();
+      })
+      .then((data: { description?: string; highlights?: typeof biography.highlights }) => {
+        if (cancelled) return;
+        setBiography((prev) => ({
+          description: data.description || prev.description,
+          highlights: data.highlights && data.highlights.length > 0 ? data.highlights : prev.highlights,
+        }));
+      })
+      .catch(() => {
+        // Keep default biography values on failure
       });
 
     return () => {
@@ -627,15 +655,7 @@ export default function Home() {
               <div className="h-[3px] w-16 bg-cyan-accent rounded-full"></div>
 
               <div className="space-y-4 text-justify text-slate-300 leading-relaxed text-sm sm:text-base">
-                <p>
-                  Representing the Sri Lankan flag on the international stage, Tuwin has spent over a decade pushing the physical and mental limits of competitive squash.
-                </p>
-                <p>
-                  A former Head Boy and Best Sportsman of D.S. Senanayake College, he was awarded the Deshabandu title at age 21 for his outstanding athletic achievements and community service during the global pandemic.
-                </p>
-                <p>
-                  Currently competing on the PSA Squash Tour, Tuwin continues to elevate the standard of Sri Lankan squash globally, backed by professional training regimes, clean sport practices, and active community outreach.
-                </p>
+                <p>{biography.description}</p>
               </div>
 
               {/* Languages Subgrid */}
@@ -653,86 +673,48 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Special Highlight: Deshabandu Award & ADA Certification */}
+            {/* Special Highlights */}
             <div className="flex-1 w-full space-y-6">
+              {biography.highlights.map((highlight, idx) => {
+                const isOrange = idx % 2 === 1;
+                const icons = [
+                  'M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222',
+                  'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
+                  'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253',
+                ];
+                return (
+                  <div
+                    key={`${highlight.heading}-${idx}`}
+                    className={`relative overflow-hidden p-8 border bg-gradient-to-br to-transparent ${isOrange ? 'glass-card-layered-orange border-orange-accent/20 from-orange-accent/5' : 'glass-card-layered border-cyan-accent/20 from-cyan-accent/5'}`}
+                  >
+                    <div className="absolute right-4 top-2 text-7xl font-black text-white/5 select-none pointer-events-none">
+                      #{String(idx + 1).padStart(2, '0')}
+                    </div>
 
-              {/* Highlight Panel */}
-              <div className="glass-card-layered relative overflow-hidden p-8 border border-cyan-accent/20 bg-gradient-to-br from-cyan-accent/5 to-transparent">
-                <div className="absolute right-4 top-2 text-7xl font-black text-white/5 select-none pointer-events-none">#01</div>
+                    <div className="flex items-start gap-4">
+                      <div className={`rounded-full p-3 ring-1 flex-shrink-0 ${isOrange ? 'bg-orange-accent/10 text-orange-accent ring-orange-accent/30' : 'bg-cyan-accent/10 text-cyan-accent ring-cyan-accent/30'}`}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d={icons[idx % icons.length]} />
+                        </svg>
+                      </div>
 
-                <div className="flex items-start gap-4">
-                  {/* Trophy Icon in Cyan */}
-                  <div className="rounded-full bg-cyan-accent/10 p-3 text-cyan-accent ring-1 ring-cyan-accent/30 flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
-                    </svg>
+                      <div className="space-y-3">
+                        {highlight.title && (
+                          <span className={`inline-block rounded-full px-3 py-1 text-[9px] font-extrabold uppercase tracking-widest ${isOrange ? 'bg-orange-accent text-white' : 'bg-cyan-accent text-black'}`}>
+                            {highlight.title}
+                          </span>
+                        )}
+                        <h4 className="text-xl font-bold tracking-tight text-white uppercase">
+                          {highlight.heading}
+                        </h4>
+                        <p className="text-sm text-slate-300 leading-relaxed">
+                          {highlight.description}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-
-                  <div className="space-y-3">
-                    <span className="inline-block rounded-full bg-cyan-accent text-black px-3 py-1 text-[9px] font-extrabold uppercase tracking-widest">
-                      Honorary Recognition
-                    </span>
-                    <h4 className="text-xl font-bold tracking-tight text-white uppercase">
-                      Deshabandu Award (Age 21)
-                    </h4>
-                    <p className="text-sm text-slate-300 leading-relaxed">
-                      Awarded the prestigious Deshabandu title at age 21 for outstanding athletic excellence and extensive social work contributions during the global pandemic. Reflects service and commitment both on the court and in the community.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Clean Sport Cert Panel */}
-              <div className="glass-card-layered-orange relative overflow-hidden p-8 border border-orange-accent/20 bg-gradient-to-br from-orange-accent/5 to-transparent">
-                <div className="absolute right-4 top-2 text-7xl font-black text-white/5 select-none pointer-events-none">#02</div>
-
-                <div className="flex items-start gap-4">
-                  {/* Shield Icon in Orange */}
-                  <div className="rounded-full bg-orange-accent/10 p-3 text-orange-accent ring-1 ring-orange-accent/30 flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                  </div>
-
-                  <div className="space-y-3">
-                    <span className="inline-block rounded-full bg-orange-accent text-white px-3 py-1 text-[9px] font-extrabold uppercase tracking-widest">
-                      Clean Competitor
-                    </span>
-                    <h4 className="text-xl font-bold tracking-tight text-white uppercase">
-                      ADEL &amp; WADA Certified
-                    </h4>
-                    <p className="text-sm text-slate-300 leading-relaxed">
-                      Certified by the World Anti-Doping Agency (WADA) under clean sport rules. Fully cleared for elite international tour competition with rigorous compliance to clean athletics logic.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* WSF Coaching & Refereeing Cert Panel */}
-              <div className="glass-card-layered relative overflow-hidden p-8 border border-cyan-accent/20 bg-gradient-to-br from-cyan-accent/5 to-transparent">
-                <div className="absolute right-4 top-2 text-7xl font-black text-white/5 select-none pointer-events-none">#03</div>
-
-                <div className="flex items-start gap-4">
-                  {/* Whistle/Cert Icon in Cyan */}
-                  <div className="rounded-full bg-cyan-accent/10 p-3 text-cyan-accent ring-1 ring-cyan-accent/30 flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                    </svg>
-                  </div>
-
-                  <div className="space-y-3">
-                    <span className="inline-block rounded-full bg-cyan-accent text-black px-3 py-1 text-[9px] font-extrabold uppercase tracking-widest">
-                      Coaching &amp; Officiating
-                    </span>
-                    <h4 className="text-xl font-bold tracking-tight text-white uppercase">
-                      WSF Certified World Level 1 Squash Coach / WSO Certified Level 1 Referee
-                    </h4>
-                    <p className="text-sm text-slate-300 leading-relaxed">
-                      Certified by the World Squash Federation (WSF) as a Level 1 Coach and accredited as a WSO Level 1 Referee, demonstrating expertise in coaching, officiating, player development, and the rules of squash.
-                    </p>
-                  </div>
-                </div>
-              </div>
+                );
+              })}
             </div>
           </div>
         </section>
