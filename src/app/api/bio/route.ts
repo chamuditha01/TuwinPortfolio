@@ -30,7 +30,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Failed to fetch bio sheet' }, { status: 502 });
   }
 
-  const rows = getSheetRows<{ Name?: unknown; Birthday?: unknown; 'World Rank'?: unknown; Age?: unknown }>(workbook, SHEET_NAME);
+  const rows = getSheetRows<{ Name?: unknown; Birthday?: unknown; 'World Rank'?: unknown; Age?: unknown; Description?: unknown }>(workbook, SHEET_NAME);
   const row = rows[0];
 
   if (!row) {
@@ -42,5 +42,6 @@ export async function GET() {
     birthday: excelDateToLabel(row.Birthday),
     worldRank: String(row['World Rank'] ?? '').trim(),
     age: String(row.Age ?? '').trim(),
+    description: String(row.Description ?? '').trim(),
   });
 }

@@ -25,7 +25,12 @@ export default function Home() {
   const [selectedYearIndex, setSelectedYearIndex] = useState(0);
   const [inquiryForm, setInquiryForm] = useState({ name: '', email: '', message: '' });
   const [inquiryStatus, setInquiryStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
-  const [bio, setBio] = useState({ name: 'Tuwin Herath', worldRank: '316', age: '26' });
+  const [bio, setBio] = useState({
+    name: 'Tuwin Herath',
+    worldRank: '316',
+    age: '26',
+    description: 'PSA Touring Professional. Deshabandu Awardee. Fueling the game with the best. Representing the Sri Lankan flag on the international stage, pushing the physical and mental limits of competitive squash.',
+  });
   const [sponsors, setSponsors] = useState<{ name: string; imageUrl: string; status: string; description: string }[]>([]);
   const [rankings, setRankings] = useState<{ date: string; ranking: number }[]>([]);
   const [tournaments, setTournaments] = useState<{
@@ -40,6 +45,7 @@ export default function Home() {
   }[]>([]);
   const [coaches, setCoaches] = useState<{ name: string; profile: string[]; biography: string; imageUrl: string }[]>([]);
   const [expandedBios, setExpandedBios] = useState<Set<number>>(new Set());
+  const [careerAchievements, setCareerAchievements] = useState<{ title: string; heading: string; description: string; footer: string }[]>([]);
   const [contact, setContact] = useState({
     locations: 'Malabe, Sri Lanka / Shanghai, China',
     email: 'tuwinosanda@gmail.com',
@@ -54,12 +60,13 @@ export default function Home() {
         if (!res.ok) throw new Error('Failed to load bio');
         return res.json();
       })
-      .then((data: { name?: string; worldRank?: string; age?: string }) => {
+      .then((data: { name?: string; worldRank?: string; age?: string; description?: string }) => {
         if (cancelled) return;
         setBio((prev) => ({
           name: data.name || prev.name,
           worldRank: data.worldRank || prev.worldRank,
           age: data.age || prev.age,
+          description: data.description || prev.description,
         }));
       })
       .catch(() => {
@@ -171,6 +178,26 @@ export default function Home() {
       })
       .catch(() => {
         // Keep default contact values on failure
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch('/api/career-achievements')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to load career achievements');
+        return res.json();
+      })
+      .then((data: { achievements: typeof careerAchievements }) => {
+        if (!cancelled) setCareerAchievements(data.achievements);
+      })
+      .catch(() => {
+        // Keep empty career achievements list on failure
       });
 
     return () => {
@@ -378,7 +405,7 @@ export default function Home() {
             </h2>
 
             <p className="mx-auto lg:mx-0 max-w-lg text-justify text-base text-white/90 leading-relaxed md:text-lg">
-              PSA Touring Professional. Deshabandu Awardee. Fueling the game with the best. Representing the Sri Lankan flag on the international stage, pushing the physical and mental limits of competitive squash.
+              {bio.description}
             </p>
 
             <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 pt-4">
@@ -805,58 +832,42 @@ export default function Home() {
           </div>
 
           <div className="grid gap-6 grid-cols-1 md:grid-cols-3 relative z-10">
+            {careerAchievements.map((achievement, idx) => {
+              const isOrange = idx % 2 === 1;
+              const icons = [
+                'M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9',
+                'M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222',
+                'M13 10V3L4 14h7v7l9-11h-7z',
+              ];
+              return (
+                <div
+                  key={`${achievement.title}-${idx}`}
+                  className={`p-6 relative overflow-hidden group flex flex-col justify-between ${isOrange ? 'glass-card-layered-orange' : 'glass-card-layered'}`}
+                >
+                  <div className={`absolute top-0 left-0 w-[4px] h-full ${isOrange ? 'bg-orange-accent' : 'bg-cyan-accent'}`}></div>
+                  <div className={`absolute right-4 top-4 ${isOrange ? 'text-orange-accent/20' : 'text-cyan-accent/20'}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d={icons[idx % icons.length]} />
+                    </svg>
+                  </div>
 
-            {/* Achievement 1 */}
-            <div className="glass-card-layered p-6 relative overflow-hidden group flex flex-col justify-between">
-              <div className="absolute top-0 left-0 w-[4px] h-full bg-cyan-accent"></div>
-              <div className="absolute right-4 top-4 text-cyan-accent/20"><svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg></div>
-
-              <div className="space-y-4">
-                <span className="inline-block rounded-full bg-cyan-accent/10 text-cyan-accent px-3 py-1 text-[9px] font-extrabold uppercase tracking-widest">Global Medals</span>
-                <h4 className="text-xl font-bold uppercase tracking-wide text-white">International Medalist</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Secured a Bronze medal at the 2025 International Tournament in Qatar and competed at international level in Prague, Czech Republic, exhibiting high tactical capabilities against global competitors.
-                </p>
-              </div>
-              <div className="mt-6 border-t border-white/5 pt-4 text-[9px] uppercase font-bold text-slate-500 tracking-wider">
-                QSF Qatar &amp; Prague, Czech Republic 2025
-              </div>
-            </div>
-
-            {/* Achievement 2 */}
-            <div className="glass-card-layered-orange p-6 relative overflow-hidden group flex flex-col justify-between">
-              <div className="absolute top-0 left-0 w-[4px] h-full bg-orange-accent"></div>
-              <div className="absolute right-4 top-4 text-orange-accent/20"><svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg></div>
-
-              <div className="space-y-4">
-                <span className="inline-block rounded-full bg-orange-accent/10 text-orange-accent px-3 py-1 text-[9px] font-extrabold uppercase tracking-widest">National Duty</span>
-                <h4 className="text-xl font-bold uppercase tracking-wide text-white">National Veteran</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Represented Sri Lanka at the Asian Senior Squash Championship in Hong Kong 2023 and ranked among the top 50 in Asia 2023. Represented the Sri Lanka Junior National Team since 2013. Selected and served as Vice Captain leading international team clashes.
-                </p>
-              </div>
-              <div className="mt-6 border-t border-white/5 pt-4 text-[9px] uppercase font-bold text-slate-500 tracking-wider">
-                7 Consecutive Years
-              </div>
-            </div>
-
-            {/* Achievement 3 */}
-            <div className="glass-card-layered p-6 relative overflow-hidden group flex flex-col justify-between">
-              <div className="absolute top-0 left-0 w-[4px] h-full bg-cyan-accent"></div>
-              <div className="absolute right-4 top-4 text-cyan-accent/20"><svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg></div>
-
-              <div className="space-y-4">
-                <span className="inline-block rounded-full bg-cyan-accent/10 text-cyan-accent px-3 py-1 text-[9px] font-extrabold uppercase tracking-widest">Pro Circuit</span>
-                <h4 className="text-xl font-bold uppercase tracking-wide text-white">PSA Challenger Tour</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Active competitor in global PSA Squash Tour events across Asia, Europe, and Oceania, competing in internationally recognized professional tournaments.
-                </p>
-              </div>
-              <div className="mt-6 border-t border-white/5 pt-4 text-[9px] uppercase font-bold text-slate-500 tracking-wider">
-                Asia, Europe &amp; Oceania Circuits
-              </div>
-            </div>
-
+                  <div className="space-y-4">
+                    <span className={`inline-block rounded-full px-3 py-1 text-[9px] font-extrabold uppercase tracking-widest ${isOrange ? 'bg-orange-accent/10 text-orange-accent' : 'bg-cyan-accent/10 text-cyan-accent'}`}>
+                      {achievement.title}
+                    </span>
+                    <h4 className="text-xl font-bold uppercase tracking-wide text-white">{achievement.heading}</h4>
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                      {achievement.description}
+                    </p>
+                  </div>
+                  {achievement.footer && (
+                    <div className="mt-6 border-t border-white/5 pt-4 text-[9px] uppercase font-bold text-slate-500 tracking-wider">
+                      {achievement.footer}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* Competency & Timeline Highlights */}

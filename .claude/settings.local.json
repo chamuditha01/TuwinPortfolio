@@ -14,7 +14,10 @@
       "Bash(curl -sL \"https://docs.google.com/spreadsheets/d/1sY7_eNfVYkKDoS3SXm1ft2luVwKsN59orsIjehfV9Xs/export?format=xlsx\" -o \"C:\\\\Users\\\\ASUS\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\e--Work-Mr--Sudharshanath-work-tuwin-herath-main\\\\34ab2495-99d0-47e1-86e1-fb64614eff5c\\\\scratchpad\\\\full-check5.xlsx\")",
       "Bash(node -e ' *)",
       "Bash(curl -s -m 20 http://localhost:3000/api/coach)",
-      "Bash(curl -s -m 20 http://localhost:3000/)"
+      "Bash(curl -s -m 20 http://localhost:3000/)",
+      "Bash(curl -s -m 20 http://localhost:3000/api/career-achievements)",
+      "Bash(curl -sL \"https://docs.google.com/spreadsheets/d/1sY7_eNfVYkKDoS3SXm1ft2luVwKsN59orsIjehfV9Xs/export?format=xlsx\" -o \"C:\\\\Users\\\\ASUS\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\e--Work-Mr--Sudharshanath-work-tuwin-herath-main\\\\34ab2495-99d0-47e1-86e1-fb64614eff5c\\\\scratchpad\\\\bio-check.xlsx\")",
+      "Bash(curl -s -m 20 http://localhost:3000/api/bio)"
     ]
   }
 }
