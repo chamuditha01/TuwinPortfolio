@@ -46,6 +46,7 @@ export default function Home() {
   const [coaches, setCoaches] = useState<{ name: string; profile: string[]; biography: string; imageUrl: string }[]>([]);
   const [expandedBios, setExpandedBios] = useState<Set<number>>(new Set());
   const [careerAchievements, setCareerAchievements] = useState<{ title: string; heading: string; description: string; footer: string }[]>([]);
+  const [timelineData, setTimelineData] = useState<{ year: string; title: string; description: string; tag: string; icon: string }[]>([]);
   const [contact, setContact] = useState({
     locations: 'Malabe, Sri Lanka / Shanghai, China',
     email: 'tuwinosanda@gmail.com',
@@ -205,6 +206,26 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch('/api/career-highlights')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to load career highlights');
+        return res.json();
+      })
+      .then((data: { highlights: typeof timelineData }) => {
+        if (!cancelled) setTimelineData(data.highlights);
+      })
+      .catch(() => {
+        // Keep empty timeline list on failure
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const [bioFirstName, ...bioLastNameParts] = bio.name.trim().split(' ');
   const bioLastName = bioLastNameParts.join(' ');
 
@@ -224,52 +245,6 @@ export default function Home() {
       setInquiryStatus('error');
     }
   };
-
-  // Timeline Highlights Data
-  const timelineData = [
-    {
-      year: '2018',
-      title: 'Sri Lanka Junior National Vice Captain',
-      description: 'Led the Junior National squad in international clashes, capping off 7 consecutive years of national junior representation.',
-      tag: 'Leadership',
-      icon: '🏆'
-    },
-    {
-      year: '2021',
-      title: 'Deshabandu National Award',
-      description: 'Received the prestigious Deshabandu title at age 21 for athletic excellence and community service during the global pandemic.',
-      tag: 'Honor',
-      icon: '🎖️'
-    },
-    {
-      year: '2023',
-      title: 'PSA Tour Debut & Surge',
-      description: 'Officially joined the Professional Squash Association (PSA) World Tour and rose from WR 666 to WR 560 following the Malaysia Satellite events.',
-      tag: 'Pro Tour',
-      icon: '⚡'
-    },
-    {
-      year: '2025',
-      title: 'International Bronze Medalist',
-      description: 'Won the Bronze medal at the Doha QSF 3 PSA Satellite Championship and Shanghai (China) PSA Satellite Championship, achieved a notable upset victory over a Top 150 PSA-ranked player in Australia, reached the Top 8, and achieved a career-high World Ranking of 316.',
-      tag: 'Medal',
-      icon: '🥉'
-    },
-    {
-      year: '2026',
-      title: 'PSA Challenger Tour & Consulting',
-      description: 'Currently competing on the PSA Challenger Tour across Asia, Europe, and Oceania, while serving as an elite Squash Consultant based in Shanghai.',
-      tag: 'Current',
-      icon: '🌏'
-    },
-    {
-      year: '2027',
-      title: 'PSA World Tour Ascent',
-      description: 'Current goal for this season 2026/27 : break into top 250 players in the world through consistent PSA Squash Tour tournaments',
-      tag: 'Goal',
-      icon: '🎯'
-    }
-  ];
 
   // Navigation Links
   const navLinks = [
@@ -923,6 +898,7 @@ export default function Home() {
         </section>
 
         {/* Career Highlights Horizontal Interactive Timeline */}
+        {timelineData.length > 0 && (
         <section id="timeline" className="py-20 border-b border-white/5 relative z-10">
           <div className="text-center mb-12">
             <p className="text-xs font-bold uppercase tracking-[0.3em] text-cyan-accent mb-2">Milestones</p>
@@ -1012,6 +988,7 @@ export default function Home() {
             </div>
           </div>
         </section>
+        )}
 
         {/* 5. Sponsors Section */}
         <section id="partners" className="py-24 border-b border-white/5 text-center px-6">
